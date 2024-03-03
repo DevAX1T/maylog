@@ -5,7 +5,7 @@ import { MaylogClient } from '../../../maylog';
 import Logger from '../../../util/Logger';
 import MaylogEvent from '../../../maylog/structures/MaylogEvent';
 
-export default class GuildDataCreateEvent extends MaylogEvent<'ready'> {
+export default class CoreReadyEvent extends MaylogEvent<'ready'> {
     public readonly name: string = 'CoreReady';
     public readonly code: NSClient.KeyofEvents = 'ready';
     constructor(client: MaylogClient) {
