@@ -46,11 +46,23 @@ const embeds = {
 const REGEX = /<@&\d+>/g;
 const REPLACE_REGEX = /<@&|>/g;
 
-// todo: add a dank memer-like /alert system
+// todo: add a /alert system?
 // todo: when people use admin_leave, add a notice saying it no longer DMs people. Maybe implement in the future?
 export default <ConfigData>{
-    // Add command roles. Add high command roles. Add employee role
-    // todo: add the AutoRole config option
+    autorole: {
+        description: 'Toggle automatic roles after a department action',
+        arguments: [
+            {
+                name: 'status',
+                description: 'Do you want to enable or disable autorole?',
+                type: MaylogEnum.Argument.String,
+                choices: [ { name: 'Enable autorole', value: 'enable' }, { name: 'Disable autorole', value: 'disable' } ]
+            }
+        ],
+        exec: async (data) => {
+            return Promise.resolve('');
+        }
+    },
     set_roles: {
         description: 'Set the employee role, command roles, or high command roles.',
         arguments: [
@@ -80,12 +92,11 @@ export default <ConfigData>{
                     { value: 'remove',  name: 'Remove multiple roles' },
                     { value: 'replace', name: 'Replace all roles'     },
                 ]
-                // choices: Global.makeChoices('add', 'remove', 'replace'),
             },
             {
                 name: 'roles',
-                description: 'What roles do you want to set? Mention the role(s).', // Todo: Detect if someone adds/removes 3+ roles at once. Tell them they can prefix it with +/- 
-                type: MaylogEnum.Argument.String, // to add all/remove all
+                description: 'What roles do you want to set? Mention the role(s).',
+                type: MaylogEnum.Argument.String,
                 optional: true
             },
         ],
@@ -106,20 +117,16 @@ export default <ConfigData>{
             }
             const matchedRoles = rolesArg.match(REGEX);
             if (!matchedRoles && modifier !== 'replace') return Promise.resolve({ embeds: [ embeds.error(errors.ConfigNoRoleModifier) ] });
-            // if (modifier === 'replace' && !matchedRoles) {
-            //     data.guild.config.roles[action]
-            //     return
-            // }
+
             const rolesPrelim = matchedRoles!.map(id => id.replace(REPLACE_REGEX, ''));
             const roles = new Set<string>();
             rolesPrelim.forEach(r => {
                 if (!data.context.guild!.roles.cache.has(r)) return;
                 roles.add(r);
             });
-            // const roles = rolesPrelim;
             if (modifier !== 'replace' && roles.size > limits[action]) return Promise.resolve({ embeds: [ embeds.error(`You can only provide a maximum of \`${limits[action]}\` roles for that type.`) ] });
             const oldValue = data.guild.config.roles[action];
-            // todo: check to make sure roles exist and areint he server
+
             if (Array.isArray(oldValue)) {
                 if (modifier === 'add') {
                     const oldSet = new Set<string>(oldValue);
