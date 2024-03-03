@@ -50,37 +50,42 @@ const DMYY_REGEX = /(\d{1,2})[./-](\d{1,2})[./-](\d{4})/;
 const MDY_REGEX = /(\d{1,2})\/(\d{1,2})\/(\d{4})/;
 
 function getExpirationMs(time: string): [ string | number, string ] | string {
-    if (isIndef(time)) return [ -1, '**indefinitely**' ];
-    let expirationMs: number | false = ms(time);
-    if (expirationMs) expirationMs = Math.floor(expirationMs + Date.now());
-
-    if (!expirationMs) {
-        let match: RegExpMatchArray | null;
-
-        expirationMs = DateTime.fromISO(time).setZone(Constants.defaultZone).toMillis();
-        if (isNaN(expirationMs)) {
-            // Try parsing with MDY_REGEX
-            match = time.match(MDY_REGEX);
-            if (match) {
-                const [_, month, day, year] = match;
-                expirationMs = DateTime.fromObject({ year: parseInt(year), month: parseInt(month), day: parseInt(day) }).setZone(Constants.defaultZone).toMillis();
-            }
+    try {
+        if (isIndef(time)) return [ -1, '**indefinitely**' ];
+        let expirationMs: number | false = ms(time);
+        if (expirationMs) expirationMs = Math.floor(expirationMs + Date.now());
     
-            // Try parsing with DMYY_REGEX if both MDY_REGEX and DMY_REGEX didn't match and expirationMs is still false
-            if (!expirationMs) {
-                match = time.match(DMYY_REGEX);
+        if (!expirationMs) {
+            let match: RegExpMatchArray | null;
+    
+            expirationMs = DateTime.fromISO(time).setZone(Constants.defaultZone).toMillis();
+            if (isNaN(expirationMs)) {
+                // Try parsing with MDY_REGEX
+                match = time.match(MDY_REGEX);
                 if (match) {
-                    const [_, day, month, year] = match;
+                    const [_, month, day, year] = match;
                     expirationMs = DateTime.fromObject({ year: parseInt(year), month: parseInt(month), day: parseInt(day) }).setZone(Constants.defaultZone).toMillis();
                 }
+        
+                // Try parsing with DMYY_REGEX if both MDY_REGEX and DMY_REGEX didn't match and expirationMs is still false
+                if (!expirationMs) {
+                    match = time.match(DMYY_REGEX);
+                    if (match) {
+                        const [_, day, month, year] = match;
+                        expirationMs = DateTime.fromObject({ year: parseInt(year), month: parseInt(month), day: parseInt(day) }).setZone(Constants.defaultZone).toMillis();
+                    }
+                }
             }
+    
+            // Handle the case where Luxon's DateTime functions return NaN
+            if (isNaN(expirationMs as number)) expirationMs = false;
         }
-
-        // Handle the case where Luxon's DateTime functions return NaN
-        if (isNaN(expirationMs as number)) expirationMs = false;
+        if (!expirationMs || isNaN(expirationMs)) return [ -2, errors.InvalidDate ];
+        return [ expirationMs, `until <t:${Math.floor(expirationMs / 1000)}:D>` ];
+    } catch (error) {
+        console.log(error);
+        return [ -2, errors.InvalidDate ];
     }
-    if (!expirationMs || isNaN(expirationMs)) return [ -2, errors.InvalidDate ];
-    return [ expirationMs, `until <t:${Math.floor(expirationMs / 1000)}:D>` ];
 }
 
 function isIndef(str: string | undefined): boolean {
@@ -358,33 +363,14 @@ export default <ActionData>{
     },
     blacklist: {
         description: 'Log a blacklist for a user.',
-        arguments: [
-            {
-                name: 'type',
-                description: 'What is the blacklist type?',
-                type: MaylogEnum.Argument.String,
-                choices: [
-                    { name: 'Permanent blacklist', value: 'permanent' },
-                    { name: 'General blacklist', value: 'general' },
-                    { name: 'Temporary blacklist', value: 'temporary' }
-                ]
-            }
-        ],
+        arguments: [ Object.assign({}, ARGUMENTS.expiration, { description: 'When will the blacklist expire? Use "inf" for never.' }) ],
         exec: (data) => {
             const { embed, subject, context } = data;
             const [ expirationMs, expStr ] = getExpirationMs(context.arguments.getString('expiration')!);
-            // if (expirationMs === -2) return expStr;
-            const type = context.arguments.getString('type') as 'permanent' | 'temporary' | 'general';
-            let displayMessage;
-            if (type === 'permanent' || type === 'temporary' && expirationMs === -1) {
-                displayMessage = 'permanently';
-            } else if (type === 'temporary') {
-                if (expirationMs === -2) return expStr;
-                displayMessage = 'temporarily';
-            }
+            if (expirationMs === -2) return expStr;
 
             embed.setColor(colors.fromString('black'));
-            embed.setDescription(`**${subject.username}** has been ${displayMessage ? `${displayMessage} ` : ''}blacklisted.`);
+            embed.setDescription(`**${subject.username}** has been **blacklisted** ${expStr}.`);
         }
     },
     discharge: {
@@ -407,8 +393,8 @@ export default <ActionData>{
             let message = `**${subject.username}** `;
             colors.fromString('yellow')
             const options = {
-                honorable:    [ 'yellow', 'has been **honorably** discharged',    'has **resigned**'        ],
-                dishonorable: [ 'red',    'has been **dishonorably** discharged', 'has been **terminated**' ],
+                honorable:    [ 'yellow', 'has been **honorably** discharged',    'has **resigned** '        ],
+                dishonorable: [ 'red',    'has been **dishonorably** discharged', 'has been **terminated** ' ],
                 preliminary:  [ 'yellow', 'has been **preliminarily** discharged'                       ],
                 general:      [ 'yellow', 'has been **generally** discharged'                           ]
             }
