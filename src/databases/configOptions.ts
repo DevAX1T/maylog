@@ -49,6 +49,30 @@ const REPLACE_REGEX = /<@&|>/g;
 // todo: add a /alert system?
 // todo: when people use admin_leave, add a notice saying it no longer DMs people. Maybe implement in the future?
 export default <ConfigData>{
+    suspension_contact_message: {
+        description: 'Set the contact message for when duties are suspended.',
+        arguments: [
+            {
+                name: 'message',
+                description: 'What will the contact message be?',
+                type: MaylogEnum.Argument.String,
+                choices: Global.makeChoicesDictionary(contacts)
+            }     
+        ],
+        exec: async (data) => {
+            const message = data.context.arguments.getString('message')!;
+            const oldContact = data.guild.config.contact;
+            data.guild.config.contact = message as any;
+            try {
+                await data.context.client.DataProvider.guilds.update(data.guild._id, data.guild);
+                const contactMessage = `Contact ${contacts[oldContact]} if seen on-team.`;
+                return Promise.resolve({ embeds: [ embeds.success('I successfully edited the message', contactMessage) ] });
+            } catch (error) {
+                Sentry.captureException(error);
+                return Promise.reject(error);
+            }
+        }
+    },
     autorole: {
         description: 'Toggle automatic roles after a department action',
         arguments: [
@@ -60,7 +84,17 @@ export default <ConfigData>{
             }
         ],
         exec: async (data) => {
-            return Promise.resolve('');
+            const status = data.context.arguments.getString('message') === 'enabled' ? true : false;
+            const oldValue = data.guild.config.autoRole;
+            const gt = (status: boolean) => !!status ? 'enabled' : 'disabled';
+            data.guild.config.autoRole = status;
+            try {
+                await data.context.client.DataProvider.guilds.update(data.guild._id, data.guild);
+                return Promise.resolve({ embeds: [ embeds.success(`I successfully ${gt(status)} autorole.`, gt(oldValue)) ]     });
+            } catch (error) {
+                Sentry.captureException(error);
+                return Promise.reject(error);
+            }
         }
     },
     set_roles: {
