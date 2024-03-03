@@ -1,5 +1,5 @@
 import { MaylogArgument, MaylogCommandContext } from '../../../maylog/structures/MaylogCommand';
-import { MaylogClient, MaylogCommand, MaylogEnum } from '../../../maylog';
+import { MaylogClient, MaylogCommand, MaylogEnum, UserPermissions } from '../../../maylog';
 import * as Sentry from '@sentry/node';
 import ConfigOptions from '../../../databases/configOptions';
 import errors from '../../../databases/errors';
@@ -27,7 +27,8 @@ export = class Command extends MaylogCommand {
             description: 'Configure mayLOG',
             module: 'info',
             arguments: commandArguments,
-            guildOnly: true
+            guildOnly: true,
+            userPermissions: UserPermissions.ManageGuild
         });
     }
     async run(context: MaylogCommandContext) {

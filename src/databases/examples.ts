@@ -5,6 +5,6 @@ export default {
         MMDDYYYY: [ '12/25/2024', '2023/05/15' ],
         DDMMYYYY: [ '25.12.2024', '15.05.2023' ],
         ISO: [ '2024-02-25T23:46:08+0000' ],
-        indefinite: [ 'indef', 'indefinite', 'indefinitely', 'forever', 'inf', 'perm',  'permanent', 'permanently', 'unknown', 'never' ]
+        indefinite: [ 'indef', 'indefinite', 'indefinitely', 'infinite', 'infinity', 'forever', 'inf', 'perm',  'permanent', 'permanently', 'unknown', 'never' ]
     }
 }

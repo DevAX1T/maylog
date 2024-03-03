@@ -374,7 +374,7 @@ export default <ActionData>{
         }
     },
     discharge: {
-        description: 'Log a discharge',
+        description: 'Log a discharge.',
         arguments: [
             {
                 name: 'type',

@@ -56,6 +56,9 @@ export interface IMaylogGuild {
             /** Activity log channel */
             activity_ance: string;
         };
+        DMs: {
+            admin_leave: string;
+        };
         /** Typically webhooks */
         secrets: Record<string, string>;
     }
@@ -113,6 +116,9 @@ export default <IMaylogGuild>{
             /** Where all activity log submissions are sent */
             activityLog: '',
             activity_ance: ''
+        },
+        DMs: {
+            admin_leave: ''
         },
         secrets: {}
     }
