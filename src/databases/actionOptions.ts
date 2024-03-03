@@ -230,6 +230,7 @@ export default <ActionData>{
     },
     suspension: {
         description: 'Log a suspension.',
+        arguments: [ ARGUMENTS.expiration ],
         exec: (data) => {
             const { embed, subject, guild, context } = data;
             const [ expirationMs, expStr ] = getExpirationMs(context.arguments.getString('expiration')!);
@@ -238,7 +239,7 @@ export default <ActionData>{
             embed.setDescription(stripIndents`
                 **${subject.username}** has been **suspended** ${expStr}.
 
-                Contact ${guild.config.contact} if seen on team.
+                Contact ${contacts[guild.config.contact]} if seen on team.
             `);
         }
     },
