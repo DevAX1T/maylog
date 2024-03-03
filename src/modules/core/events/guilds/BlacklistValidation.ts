@@ -31,7 +31,6 @@ export default class GuildDataCreateEvent extends MaylogEvent<'guildCreate'> {
                     Logger.log(ILog.Level.Info, 'Core', `Guild created for ${guild.id}`);
                 }
             }).catch(() => false);
-            // todo: data creation and stuff. yeah.
         }
         return this.listener;
     }
