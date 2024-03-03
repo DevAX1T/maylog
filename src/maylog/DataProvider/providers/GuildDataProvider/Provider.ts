@@ -43,10 +43,11 @@ export default class GuildDataProvider {
                         clone._id = guildId;
                         resolve(this.transformData(clone));
                     } else {
+                        if (!guild.version) guild = Migrator(guild as any);
                         let guildData = Object.assign({}, MaylogGuild, guild);
-                        if (!guildData.version) guildData = Migrator(guild as any);
                         guildData.config = Object.assign({}, MaylogGuild.config, guild.config);
                         resolve(this.transformData(guildData));
+                        // todo: cache guild in redis
                     }
                 }).catch(reject);
             }
@@ -54,13 +55,9 @@ export default class GuildDataProvider {
                 const rawGuildData = await this.core.redis.get(`${Global.db}/guilds/${guildId}`);
                 // renew guild
                 if (rawGuildData) {
-                    // resolve(JSON.parse(rawGuildData))
-                    // JSON.stringify({}, (x, b) => {
-
-                    // })
-                    const guild = JSON.parse(rawGuildData);
+                    let guild = JSON.parse(rawGuildData);
+                    if (!guild.version) guild = Migrator(guild);
                     let guildData = Object.assign({}, MaylogGuild, guild);
-                    if (!guildData.version) guildData = Migrator(guild);
                     guildData.config = Object.assign({}, MaylogGuild.config, guild.config);
                     resolve(this.transformData(guild));
                 } else {

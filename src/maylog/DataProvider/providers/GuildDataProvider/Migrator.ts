@@ -35,6 +35,7 @@ export = (data: GuildV1): GuildV2 => {
     obj.config.departmentIcon = data.config.departmentIconURL;
     obj.config.embedOptions.dischargeDisplay = data.config.dischargeDisplay === 'terminate' ? false : true;
     obj.config.embedOptions.showAvatar = data.config.showAvatarOnActionMessages;
+    obj.config.autoRole = data.config.autoRole;
     //> Channels
     obj.config.channels.action = typeof data.config.logChannel === 'string' ? data.config.logChannel : '';
     //> Roles
