@@ -1,0 +1,8 @@
+# Security
+.env
+certificates/
+# General exclusion
+.vscode/
+out/
+node_modules/
+package-lock.json
