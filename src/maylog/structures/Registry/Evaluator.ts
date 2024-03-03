@@ -72,9 +72,16 @@ export = (dispatcher: Dispatcher, interaction: CommandInteraction) => {
 
         // check permissions
         const channel = interaction.channel;
-        if (channel && command.clientPermissions) {
+        if (command.clientPermissions) {
+            const permissions = interaction.guild!.members.me!.permissions.missing(command.clientPermissions);
+            if (permissions.length > 0) return interaction.reply({
+                ephemeral: true,
+                content: `I cannot run this command. I'm missing the following permissions: ${permissions.map(m => `\`${m}\``).join(', ')}`
+            });
+        }
+        if (channel && command.channelPermissions) {
             const permissions = interaction.guild!.members.me!.permissionsIn(channel as GuildTextBasedChannel)
-            const missing = permissions.missing(command.clientPermissions);
+            const missing = permissions.missing(command.channelPermissions);
             if (missing.length > 0) return interaction.reply({
                 ephemeral: true,
                 content: `I cannot run this command. I'm missing the following permissions: ${missing.map(m => `\`${m}\``).join(', ')}`

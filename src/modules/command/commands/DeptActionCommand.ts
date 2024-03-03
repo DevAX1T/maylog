@@ -75,7 +75,8 @@ export = class DeptActionCommand extends MaylogCommand {
             module: 'command',
             guildOnly: true,
             arguments: commandArguments,
-            clientPermissions: UserPermissions.EmbedLinks + UserPermissions.SendMessages + UserPermissions.ManageRoles
+            channelPermissions: UserPermissions.EmbedLinks + UserPermissions.SendMessages,
+            clientPermissions: UserPermissions.ManageRoles
         });
     }
     async run(context: MaylogCommandContext) {

@@ -69,6 +69,8 @@ export interface MaylogCommandOptions {
     arguments?: MaylogArgument[];
     /** Permissions the bot requires to run the command */
     clientPermissions?: bigint;
+    /** Permissions the bot requires in the channel to run the command */
+    channelPermissions?: bigint;
     /** Permissions the user requires to run the command (if the module doesnt allow it already) */
     userPermissions?: bigint;
     /**
@@ -104,6 +106,7 @@ export default class MaylogCommand implements MaylogCommandOptions {
     public readonly cooldown?: number | undefined;
     public readonly clientPermissions?: bigint | undefined;
     public readonly userPermissions?: bigint | undefined;
+    public readonly channelPermissions?: bigint | undefined;
     public readonly aliases?: string[] | undefined;
     public manualGuildRollout?: string[] | undefined; // not readonly because of Core (dev commands)
     public guildOnly?: boolean | undefined; // same thing as above
@@ -126,6 +129,7 @@ export default class MaylogCommand implements MaylogCommandOptions {
         if (options.cooldown) this.cooldown = options.cooldown;
         if (options.clientPermissions) this.clientPermissions = options.clientPermissions;
         if (options.userPermissions) this.userPermissions = options.userPermissions;
+        if (options.channelPermissions) this.channelPermissions = options.channelPermissions;
         if (options.aliases) this.aliases = options.aliases;
         if (options.manualGuildRollout) this.manualGuildRollout = options.manualGuildRollout;
         // if (options.module) this.module = options.module;
