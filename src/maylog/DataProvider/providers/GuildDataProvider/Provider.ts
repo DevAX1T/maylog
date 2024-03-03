@@ -47,7 +47,6 @@ export default class GuildDataProvider {
                         let guildData = Object.assign({}, MaylogGuild, guild);
                         guildData.config = Object.assign({}, MaylogGuild.config, guild.config);
                         resolve(this.transformData(guildData));
-                        // todo: cache guild in redis
                     }
                 }).catch(reject);
             }
@@ -59,7 +58,7 @@ export default class GuildDataProvider {
                     if (!guild.version) guild = Migrator(guild);
                     let guildData = Object.assign({}, MaylogGuild, guild);
                     guildData.config = Object.assign({}, MaylogGuild.config, guild.config);
-                    resolve(this.transformData(guild));
+                    resolve(this.transformData(guildData));
                 } else {
                     fetchMongo();
                 }

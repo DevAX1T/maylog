@@ -1,6 +1,7 @@
 import GuildV2Object, { IMaylogGuild as GuildV2 } from '../../structures/core/Guild';
 
 interface GuildV1 {
+    _id: string;
     blacklist: { status: false, reason: undefined | string },
     recentCommands: Date[],
     commandLogs: [],
@@ -30,6 +31,7 @@ interface GuildV1 {
 export = (data: GuildV1): GuildV2 => {
     const obj = structuredClone(GuildV2Object);
     //> Core
+    obj._id = data._id;
     obj.blacklist = data.blacklist.status === false ? false : data.blacklist.reason!
     obj.config.contact = data.config.adminLeaveContact;
     obj.config.departmentIcon = data.config.departmentIconURL;
