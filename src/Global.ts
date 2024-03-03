@@ -58,6 +58,11 @@ export default {
     getVersion(): string {
         return Constants.version;
     },
+    makeChoicesDictionary(dictionary: Record<string, string>) {
+        const choices: { name: string, value: string }[] = [];
+        Object.entries(dictionary).forEach(([id, desc]) => choices.push({ name: desc, value: id }));
+        return choices;
+    },
     makeChoices(...options: string[]) {
         return options.map(o => {
             return { name: o, value: o }
