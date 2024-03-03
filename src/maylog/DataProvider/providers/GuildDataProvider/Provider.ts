@@ -3,6 +3,7 @@ import * as Sentry from '@sentry/node';
 import CoreDataProvider from './../CoreDataProvider';
 import Global from '../../../../Global';
 import path from 'path';
+import Migrator from './Migrator';
 
 
 interface IDataTransformer {
@@ -42,7 +43,8 @@ export default class GuildDataProvider {
                         clone._id = guildId;
                         resolve(this.transformData(clone));
                     } else {
-                        const guildData = Object.assign({}, MaylogGuild, guild);
+                        let guildData = Object.assign({}, MaylogGuild, guild);
+                        if (!guildData.version) guildData = Migrator(guild as any);
                         guildData.config = Object.assign({}, MaylogGuild.config, guild.config);
                         resolve(this.transformData(guildData));
                     }
@@ -57,7 +59,8 @@ export default class GuildDataProvider {
 
                     // })
                     const guild = JSON.parse(rawGuildData);
-                    const guildData = Object.assign({}, MaylogGuild, guild);
+                    let guildData = Object.assign({}, MaylogGuild, guild);
+                    if (!guildData.version) guildData = Migrator(guild);
                     guildData.config = Object.assign({}, MaylogGuild.config, guild.config);
                     resolve(this.transformData(guild));
                 } else {
