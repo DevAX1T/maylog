@@ -13,6 +13,7 @@ export default class MessageCreateEvent extends MaylogEvent<'messageCreate'> {
     }
     trigger(): (message: Message<boolean>) => Awaitable<void> {
         this.listener = async (message) => {
+            // todo: Use the /help embed instead (and modify that too)
             const mention = `<@${this.client.user!.id}>`;
             if (message.content.replace('!', '') !== mention) return;
             // const helpId = this.client.application!.commands.cache.find(c => c.name === 'help')?.id

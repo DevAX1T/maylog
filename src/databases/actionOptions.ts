@@ -290,7 +290,7 @@ export default <ActionData>{
             const division = context.arguments.getRole('division');
             const rankName = context.arguments.getRole('rank')!.name;
             let description = `**${subject.username}** has been **promoted** to **${rankName}**`
-            if (division) description += ` within **${division}**`;
+            if (division) description += ` within **${division.name}**`;
             embed.setColor(colors.fromString('green'));
             embed.setDescription(`${description}.`);
         }
