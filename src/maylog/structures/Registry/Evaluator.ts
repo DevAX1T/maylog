@@ -84,7 +84,7 @@ export = (dispatcher: Dispatcher, interaction: CommandInteraction) => {
             const missing = permissions.missing(command.channelPermissions);
             if (missing.length > 0) return interaction.reply({
                 ephemeral: true,
-                content: `I cannot run this command. I'm missing the following permissions: ${missing.map(m => `\`${m}\``).join(', ')}`
+                content: `I cannot run this command. I'm missing the following channel permissions: ${missing.map(m => `\`${m}\``).join(', ')}`
             });
         }
 
