@@ -86,8 +86,8 @@ function cachedFromDiscord(provider: DataProvider, guildId: string, userId: stri
                     } catch {}
 
                     const savedata: Record<string, string | number> = {
-                        username: json.cachedUsername as string,
-                        user_id: json.user_id as number
+                        username: json.username || json.cachedUsername as string,
+                        user_id: json.robloxId as number
                     };
                     if (json.avatarURL) savedata.avatarURL = json.avatarURL;
 
@@ -116,11 +116,11 @@ async function createRedisCache(provider: DataProvider, rodata: any, guildId: st
                     try {
                         rodata.avatarURL = await getThumbnail(rodata.user_id);
                     } catch {}
+                    try {
+                        const username = await noblox.getUsernameFromId(rodata.user_id) || rodata.username;
+                        if (username) rodata.username = username;
+                    } catch {}
                 }
-                try {
-                    const username = await noblox.getUsernameFromId(rodata.user_id) || rodata.username;
-                    if (username) rodata.username = username;
-                } catch {}
             }
             rodata.cachedOn = Date.now() + (3600 * 3 * 1000);
             await provider.redis.psetex(`${Global.keys.users}/${account}`, Constants.expirationMs.user, JSON.stringify(rodata)).catch(() => false);
