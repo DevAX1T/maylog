@@ -132,8 +132,14 @@ export default class Registry {
     registerEvent(event: MaylogEvent<any>): Promise<void> {
         if (this.disabledEvents.has(event.name)) return Promise.reject(`Event ${event.name} is disabled.`);
         if (this.events.has(event.name)) return Promise.reject(`Event ${event.name} is already enabled.`);
-        if (!event.listener) event.trigger();
-        if (event.once) this.client.once(event.code, event.listener!); else this.client.on(event.code, event.listener!);
+        if (!event.listener) {
+            try {
+                event.trigger();
+            } catch {}
+        }
+        try {
+            if (event.once) this.client.once(event.code, event.listener!); else this.client.on(event.code, event.listener!);
+        } catch {}
 
         this.events.set(event.name, event);
         this.client.emit('eventRegistered', event);

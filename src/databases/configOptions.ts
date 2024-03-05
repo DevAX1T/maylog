@@ -93,6 +93,65 @@ export default <ConfigData>{
             }
         }
     },
+    // todo: Reqaction for 2.1.0
+    set_awards: {
+        description: 'Set department awards',
+        arguments: [
+            {
+                name: 'modifier',
+                description: 'Add/remove a single award or replace all awards.',
+                type: MaylogEnum.Argument.String,
+                choices: [
+                    { value: 'add',     name: 'Add multiple awards'    },
+                    { value: 'add',     name: 'Add a single award'     },
+                    { value: 'remove',  name: 'Remove a single award'  },
+                    { value: 'remove',  name: 'Remove multiple awards' },
+                    { value: 'replace', name: 'Replace all awards'     },
+                ],
+            },
+            {
+                name: 'awards',
+                description: 'SEPARATE AWARDS BY COMMA. LEAVE BLANK TO RESET',
+                type: MaylogEnum.Argument.String,
+                optional: true,
+                maxLength: 350
+            }
+        ],
+        exec: async (data) => {
+            // todo: finish this. Also add department action command
+            const awards = data.context.arguments.getString('awards')?.split(',').map(a => a.trimStart().trimEnd());
+            const modifier = data.context.arguments.getString('modifier') as 'add' | 'remove' | 'replace' | undefined;
+            const oldValue = data.guild.config.awards;
+
+            if (modifier === 'add') {
+                if (!awards) return Promise.resolve(errors.NoAward);
+                const awardSet = new Set<string>(oldValue);
+                awards.forEach(a => awardSet.add(a));
+                data.guild.config.awards = [ ...awardSet ];
+            } else if (modifier === 'remove') {
+                if (!awards) return Promise.resolve(errors.NoAward);
+                const awardSet = new Set<string>(oldValue);
+                awards.forEach(a => {
+                    awardSet.forEach(r => {
+                        if (r.toLowerCase() === a.toLowerCase()) awardSet.delete(r);
+                    });
+                });
+                data.guild.config.awards  = [ ...awardSet ];
+            } else if (modifier === 'replace') {
+                data.guild.config.awards = awards ? awards : [];
+            }
+            // data.guild.config.awards
+            // if (modifier !== 'replace' && !rolesArg) return Promise.resolve(errors.ConfigNoRoleModifier);
+            try {
+                await data.context.client.DataProvider.guilds.update(data.guild._id, data.guild);
+                return Promise.resolve({ embeds: [ embeds.success('I successfully edited the awards', oldValue.map(v => `\`${v}\``).join(', ')) ] })
+            } catch (error) {
+                Sentry.captureException(error);
+                return Promise.reject(error);
+            }
+            // return Promise.resolve('');
+        },
+    },
     set_roles: {
         description: 'Set the employee role, command roles, or high command roles.',
         arguments: [

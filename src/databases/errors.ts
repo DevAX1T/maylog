@@ -7,6 +7,15 @@ const map = (array: any[]) => {
 }
 
 export default {
+    NoAward: stripIndents`
+        I see you're either trying to use the \`/deptaction award\` command or trying to add, remove, or replace some awards. You can copy paste this example into the chat:
+        \`/config set_awards modifier:Add multiple awards awards:Internal Service Award, Distinguished Service Award, Investigative Service Award\`
+
+        The \`/deptaction award\` command **will not work** without configured awards.
+        In order to add multiple awards, you must add a comma (\`Award1,Award2\` / (\`Award1, Award2\`).
+        If you want to remove **all** rewards, simply select the reset modifier and leave the \`award\` argument blank.
+        If you need more help, you can always [read the documentation](${Constants.docsLink})!;
+    `,
     ConfigNoRoleModifier: stripIndents`
         You left the \`roles\` argument blank! You can only do that if you're using the \`replace\` modifier.
         In order to add or remove roles, you must ping them in the argument. You can ping multiple roles unless the specific action type only allows one.

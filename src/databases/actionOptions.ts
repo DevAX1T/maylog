@@ -122,6 +122,25 @@ interface ActionData {
 // todo: bulk actions (sends in multiple messages; ratelimit heavily)
 // todo: change everything to webhooks (and auto make them too)
 export default <ActionData>{
+    award: {
+        description: 'Log an award',
+        arguments: [
+            {
+                name: 'award',
+                description: 'What award do you want to issue?',
+                type: MaylogEnum.Argument.String,
+                autocomplete: true
+            }
+        ],
+        exec: (data) => {
+            const { embed, subject, guild } = data;
+            const award = data.context.arguments.getString('award')!;
+            if (award === '-') return 'You need to provide a valid award.';
+            if (!guild.config.awards.includes(award)) return errors.NoAward;
+            embed.setColor(colors.fromString('brightGold'));
+            embed.setDescription(`**${subject.username}** has been issued the **${award}**.`);
+        }
+    },
     appeal: {
         description: 'Log an appeal.',
         arguments: [

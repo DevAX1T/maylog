@@ -59,6 +59,8 @@ export interface IMaylogGuild {
         DMs: {
             admin_leave: string;
         };
+        /** An array of department awards */
+        awards: string[];
         /** Typically webhooks */
         secrets: Record<string, string>;
     }
@@ -117,6 +119,7 @@ export default <IMaylogGuild>{
             activityLog: '',
             activity_ance: ''
         },
+        awards: [],
         DMs: {
             admin_leave: ''
         },
