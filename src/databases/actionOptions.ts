@@ -124,7 +124,7 @@ interface ActionData {
 // todo: change everything to webhooks (and auto make them too)
 export default <ActionData>{
     appeal: {
-        description: 'Log an appeal',
+        description: 'Log an appeal.',
         arguments: [
             {
                 name: 'type',
@@ -272,7 +272,7 @@ export default <ActionData>{
         }
     },
     transfer_demote: {
-        description: 'Log a division transfer and demotion',
+        description: 'Log a division transfer and demotion.',
         arguments: [ ARGUMENTS.rankDemote, ARGUMENTS.divisionTransfer ],
         exec: (data) => {
             const { embed, subject, context } = data;
@@ -328,7 +328,7 @@ export default <ActionData>{
         }
     },
     custom: {
-        description: 'Log a custom action',
+        description: 'Log a custom action.',
         noSubject: true,
         arguments: [
             {
