@@ -149,9 +149,9 @@ export default <ActionData>{
                 description: 'What is the type of appeal?',
                 type: MaylogEnum.Argument.String,
                 choices: [
-                    { value: 'activity_warning', name: 'Activity warning'    },
-                    { value: 'recorded_warning', name: 'Recorded warning'    },
-                    { value: 'verbal_warning',   name: 'Verbal warning'      },
+                    { value: 'activity_warning', name: 'Activity Warning'    },
+                    { value: 'recorded_warning', name: 'Recorded Warning'    },
+                    { value: 'verbal_warning',   name: 'Verbal Warning'      },
                     { value: 'disciplinary',     name: 'Disciplinary Action' }
                 ]
             }
