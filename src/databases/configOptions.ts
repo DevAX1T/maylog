@@ -1,19 +1,15 @@
-import { ColorResolvable, GuildMember, MessageEmbed, InteractionReplyOptions, GuildTextBasedChannel } from 'discord.js';
-import { DateTime } from 'luxon';
+import { ChannelType, MaylogEnum, UserPermissions } from '../maylog';
 import { IMaylogGuild } from '../maylog/DataProvider';
 import { Lock } from '../maylog/DataProvider/Redlock';
-import { MaylogCommandContext, MaylogArgument } from '../maylog/structures/MaylogCommand';
-import { ChannelType, MaylogEnum, UserPermissions } from '../maylog';
-import { oneLine, stripIndents } from 'common-tags';
+import { MaylogArgument, MaylogCommandContext } from '../maylog/structures/MaylogCommand';
+import { GuildTextBasedChannel, InteractionReplyOptions, MessageEmbed } from 'discord.js';
 import * as Sentry from '@sentry/node';
 import colors from './colors';
-import Constants from '../Constants';
 import contacts from './contacts';
+import emojis from './emojis';
 import errors from './errors';
 import Global from '../Global';
-import ms from '../util/ms';
 import validator from 'validator';
-import emojis from './emojis';
 
 interface IData {
     context: MaylogCommandContext;

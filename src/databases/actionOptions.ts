@@ -1,16 +1,15 @@
-import { ColorResolvable, GuildMember, MessageEmbed } from 'discord.js';
+import { GuildMember, MessageEmbed } from 'discord.js';
 import { DateTime } from 'luxon';
 import { IMaylogGuild } from '../maylog/DataProvider';
 import { MaylogCommandContext, MaylogArgument } from '../maylog/structures/MaylogCommand';
 import { MaylogEnum } from '../maylog';
-import { oneLine, stripIndents } from 'common-tags';
+import { stripIndents } from 'common-tags';
 import colors from './colors';
 import Constants from '../Constants';
 import contacts from './contacts';
 import errors from '../databases/errors';
 import examples from '../databases/examples';
 import ms from '../util/ms';
-import Global from '../Global';
 
 const ARGUMENTS = {
     expiration: {
