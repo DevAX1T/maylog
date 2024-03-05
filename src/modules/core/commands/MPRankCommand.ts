@@ -1,9 +1,8 @@
-import { GuildMember, MessageAttachment } from 'discord.js';
+import { GuildMember } from 'discord.js';
 import { MaylogCommand, MaylogEnum, MaylogClient, UserPermissions } from '../../../maylog';
 import { MaylogCommandContext } from '../../../maylog/structures/MaylogCommand';
 import Constants from '../../../Constants';
 import DeptActionUtil from '../../../util/DeptActionUtil';
-import Global from '../../../Global';
 import noblox from 'noblox.js';
 
 const LETI_GROUP = 15146042;
