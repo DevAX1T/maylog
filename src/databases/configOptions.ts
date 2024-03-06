@@ -119,7 +119,9 @@ export default <ConfigData>{
         ],
         exec: async (data) => {
             // todo: finish this. Also add department action command
-            const awards = data.context.arguments.getString('awards')?.split(',').map(a => a.trimStart().trimEnd());
+            const awards = data.context.arguments.getString('awards')?.split(',').map(a => {
+                return a.replaceAll('`', '').replaceAll('*', '').trimStart().trimEnd()
+            }).filter(a => !!a);
             const modifier = data.context.arguments.getString('modifier') as 'add' | 'remove' | 'replace' | undefined;
             const oldValue = data.guild.config.awards;
 
@@ -140,17 +142,86 @@ export default <ConfigData>{
             } else if (modifier === 'replace') {
                 data.guild.config.awards = awards ? awards : [];
             }
-            // data.guild.config.awards
-            // if (modifier !== 'replace' && !rolesArg) return Promise.resolve(errors.ConfigNoRoleModifier);
+            let oldAwards: string;
+            if (oldValue.length === 0) {
+                oldAwards = 'No awards set.';
+            } else {
+                oldAwards = oldValue.map(v => `\`${v}\``).join(', ');
+                oldAwards += `\n\nIf you made a mistake, paste this in the \`awards\` argument to revert your change: \`${oldValue.map(id => `${id}`).join(', ')}\``;
+            }
             try {
                 await data.context.client.DataProvider.guilds.update(data.guild._id, data.guild);
-                return Promise.resolve({ embeds: [ embeds.success('I successfully edited the awards', oldValue.map(v => `\`${v}\``).join(', ')) ] })
+                return Promise.resolve({ embeds: [ embeds.success('I successfully edited the awards', oldAwards ) ] })
             } catch (error) {
                 Sentry.captureException(error);
                 return Promise.reject(error);
             }
             // return Promise.resolve('');
         },
+    },
+    set_ranks: {
+        description: 'Set department ranks. Ensure they are exact Roblox group names.',
+        arguments: [
+            {
+                name: 'modifier',
+                description: 'Add/remove a single role or replace all roles.',
+                type: MaylogEnum.Argument.String,
+                choices: [
+                    { value: 'add',     name: 'Add multiple roles'    },
+                    { value: 'add',     name: 'Add a single role'     },
+                    { value: 'remove',  name: 'Remove a single role'  },
+                    { value: 'remove',  name: 'Remove multiple roles' },
+                    { value: 'replace', name: 'Replace all roles'     },
+                ]
+            },
+            {
+                name: 'roles',
+                description: 'What roles do you want to set? Mention the role(s).',
+                type: MaylogEnum.Argument.String,
+                optional: true
+            },
+        ],
+        exec: async (data) => {
+            const rolesArg = data.context.arguments.getString('roles')!;
+            const modifier = data.context.arguments.getString('modifier') as 'add' | 'remove' | 'replace' | undefined;
+            const matchedRoles = rolesArg.match(REGEX);
+            // if (!matchedRoles && modifier !== 'replace') return Promise.resolve({ embeds: [ embeds.error(errors.ConfigNoRoleModifier) ] });
+
+            const rolesPrelim = matchedRoles!.map(id => id.replace(REPLACE_REGEX, ''));
+            const roles = new Set<string>();
+            rolesPrelim.forEach(r => {
+                if (!data.context.guild!.roles.cache.has(r)) return;
+                roles.add(r);
+            });
+            const oldValue = data.guild.config.ranks;
+            if (modifier === 'add') {
+                const oldSet = new Set<string>(oldValue);
+                roles.forEach(r => oldSet.add(r));
+                data.guild.config.ranks = [ ...oldSet ];
+            } else if (modifier === 'remove') {
+                const oldSet = new Set<string>(oldValue);
+                roles.forEach(r => oldSet.delete(r));
+                data.guild.config.ranks = [ ...oldSet ];
+            } else if (modifier === 'replace') {
+                const replaceSet = new Set<string>();
+                roles.forEach(r => replaceSet.add(r));
+                data.guild.config.ranks = [ ...replaceSet ];
+            }
+            let oldRoles: string;
+            if (oldValue.length === 0) {
+                oldRoles = 'No roles set.';
+            } else {
+                oldRoles = oldValue.map(id => `<@&${id}>`).join(', ');
+                oldRoles += `\n\nIf you made a mistake, paste this in the \`roles\` argument to revert your change: \`${oldValue.map(id => `<@&${id}>`).join(' ')}\``;
+            }
+            try {
+                await data.context.client.DataProvider.guilds.update(data.guild._id, data.guild);
+                return Promise.resolve({ embeds: [ embeds.success('I successfully edited the ranks', oldRoles) ] });
+            } catch (error) {
+                Sentry.captureException(error);
+                return Promise.reject(error);
+            }
+        }
     },
     set_roles: {
         description: 'Set the employee role, command roles, or high command roles.',
@@ -226,7 +297,9 @@ export default <ConfigData>{
                     roles.forEach(r => roleSet.delete(r));
                     (data.guild.config.roles[action] as string[]) = [ ...roleSet ];
                 } else if (modifier === 'replace') {
-                    (data.guild.config.roles[action] as string[]) = [ ...roles ];
+                    const roleSet = new Set<string>();
+                    roles.forEach(r => roleSet.add(r));
+                    (data.guild.config.roles[action] as string[]) = [ ...roleSet ];
                 }
             } else {
                 if (modifier === 'add') {
