@@ -50,6 +50,7 @@ const DMYY_REGEX = /(\d{1,2})[./-](\d{1,2})[./-](\d{4})/;
 const MDY_REGEX = /(\d{1,2})\/(\d{1,2})\/(\d{4})/;
 
 function getExpirationMs(time: string): [ string | number, string ] | string {
+    if (time === null) return [ -2, errors.InvalidDate ];
     try {
         if (isIndef(time)) return [ -1, '**indefinitely**' ];
         let expirationMs: number | false = ms(time);

@@ -90,7 +90,11 @@ export = class DeptActionCommand extends MaylogCommand {
                 actionSet.delete(recordedActionId);
                 return _resolve(code);
             }
-            await context.deferReply({ephemeral:true})
+            try {
+                await context.deferReply({ ephemeral:true });
+            } catch {
+                return _resolve(MaylogEnum.CommandResult.Error);
+            }
             const guilds = this.client.DataProvider.guilds;
             const subcommand = context.arguments.getSubcommand();
             const subject = context.arguments.getString('subject');
