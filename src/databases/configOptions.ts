@@ -45,6 +45,37 @@ const REPLACE_REGEX = /<@&|>/g;
 // todo: add a /alert system?
 // todo: when people use admin_leave, add a notice saying it no longer DMs people. Maybe implement in the future?
 export default <ConfigData>{
+    set_pager: {
+        description: 'Configure the pager.',
+        arguments: [
+            {
+                name: 'modifier',
+                description: 'Add or remove a pager',
+                type: MaylogEnum.Argument.String,
+                choices: [
+                    { name: 'Add a pager', value: 'add' },
+                    { name: 'Removea pager', value: 'remove' },
+                ]
+            },
+            {
+                name: 'name',
+                description: 'The name of the pager.',
+                type: MaylogEnum.Argument.String,
+                optional: true
+            },
+            {
+                name: 'channel',
+                description: 'The channel the pager should log to.',
+                type: MaylogEnum.Argument.Channel,
+                channelTypes: [ ChannelType.GuildText ],
+                optional: true
+            }
+        ],
+        exec: async (data) => {
+
+            return Promise.resolve('');
+        }
+    },
     suspension_contact_message: {
         description: 'Set the contact message for when duties are suspended.',
         arguments: [
@@ -367,7 +398,7 @@ export default <ConfigData>{
                 return Promise.resolve({ embeds: [ embeds.error(errors.NoPermissionsPreliminary) ] });
             }
             const oldChannel = data.guild.config.channels[action as keyof typeof data.guild.config.channels];
-            data.guild.config.channels[action as keyof typeof data.guild.config.channels] = channel.id;
+            (data.guild.config.channels as any)[action as keyof typeof data.guild.config.channels] = channel.id;
             try {
                 await data.context.client.DataProvider.guilds.update(data.guild._id, data.guild);
                 return Promise.resolve({ embeds: [ embeds.success('I successfully edited the channel', `<@&${oldChannel}>`) ] });
