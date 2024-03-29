@@ -51,7 +51,7 @@ export default class GuildDataProvider {
                 }).catch(reject);
             }
             try {
-                const rawGuildData = await this.core.redis.get(`${Global.db}/guilds/${guildId}`);
+                const rawGuildData = await this.core.redis.get(`${Global.db}:guilds:${guildId}`);
                 // renew guild
                 if (rawGuildData) {
                     let guild = JSON.parse(rawGuildData);
@@ -72,7 +72,7 @@ export default class GuildDataProvider {
         return new Promise((resolve, reject) => {
             const promises = [
                 this.core.mongo.db(Global.db).collection('guilds').updateOne({ _id: guildId }, { $set: guildData }, { upsert: true }),
-                this.core.redis.setex(`${Global.db}/guilds/${guildId}`, 3600, JSON.stringify(guildData))
+                this.core.redis.setex(`${Global.db}:guilds:${guildId}`, 3600, JSON.stringify(guildData))
             ];
             Promise.all(promises).then(() => resolve()).catch(reject);
         });

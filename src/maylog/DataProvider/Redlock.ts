@@ -338,7 +338,7 @@ export default class Redlock extends EventEmitter {
     duration?: number,
     settings?: Partial<Settings>
   ): Promise<Lock> {
-    resources = resources.map(r => `${Global.db}/${settings?.name ?? this.settings.name}/${r}`);
+    resources = resources.map(r => `${Global.db}:${settings?.name ?? this.settings.name}:${r}`);
     if (!duration) duration = this.settings.duration;
     if (Math.floor(duration) !== duration) {
       throw new Error("Duration must be an integer value in milliseconds.");

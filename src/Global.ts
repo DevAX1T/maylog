@@ -44,10 +44,10 @@ export default {
     },
     get keys() {
         return {
-            guilds: `${this.db}/guilds`,
-            users: `${this.db}/users`,
-            usersLookup: `${this.db}/users-lookup`,
-            log: `${this.db}/activity-logs`
+            guilds: `${this.db}:guilds`,
+            users: `${this.db}:users`,
+            usersLookup: `${this.db}:users-lookup`,
+            log: `${this.db}:activity-logs`
         }
     },
     /** Returns the bot token based on the runtime (e.g. production for Linux) */

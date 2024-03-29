@@ -55,14 +55,14 @@ export = (dispatcher: Dispatcher, interaction: CommandInteraction) => {
     } as MaylogCommandContext)
     
     try {
-        const cooldown = cooldowns.get(`${interaction.user.id}/${command.name}`);
+        const cooldown = cooldowns.get(`${interaction.user.id}:${command.name}`);
         if (cooldown) {
             if (Date.now() < cooldown) {
                 return interaction.reply({
                     ephemeral: true,
                     content: `You are on cooldown. Wait ${PrettyMilliseconds(cooldown - Date.now(), { verbose: true })} before using this command again.`
                 });
-            } else cooldowns.delete(`${interaction.user.id}/${command.name}`);
+            } else cooldowns.delete(`${interaction.user.id}:${command.name}`);
         }
         let baseSuccessMessage = `Ran slash command (${command.module}:${command.name}) for ${interaction.user.id}`;
         baseSuccessMessage += ` in ${interaction.guild ? `GUILD (${interaction.guild.id}, ${interaction.channel!.id})` : `DM (${interaction.channel!.id})`}`;
@@ -102,8 +102,8 @@ export = (dispatcher: Dispatcher, interaction: CommandInteraction) => {
                     interaction.client.Statistics.commandRun(interaction.user, command);
                     const zcer = MaylogEnum.CommandResult;
                     if (executionResult === zcer.Success && command.cooldown) {
-                        cooldowns.set(`${interaction.user.id}/${command.name}`, Date.now() + command.cooldown);
-                        setTimeout(() => cooldowns.delete(`${interaction.user.id}/${command.name}`), command.cooldown + 1000); // Just a backup
+                        cooldowns.set(`${interaction.user.id}:${command.name}`, Date.now() + command.cooldown);
+                        setTimeout(() => cooldowns.delete(`${interaction.user.id}:${command.name}`), command.cooldown + 1000); // Just a backup
                     }
                     const colors: Record<number, Chalk> = { [zcer.Success]: chalk.green, [zcer.PartialSuccess]: chalk.yellow, [zcer.Error]: chalk.red };
                     const enumName = MaylogEnum.CommandResult[executionResult];

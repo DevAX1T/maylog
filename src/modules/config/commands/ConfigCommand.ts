@@ -37,7 +37,7 @@ export = class Command extends MaylogCommand {
             await context.deferReply({ ephemeral: true });
             const guildData = await this.client.DataProvider.guilds.fetch(context.guild!.id);
 
-            this.client.DataProvider.redlock.acquire([ `config/${context.guild!.id}` ]).then(async lock => {
+            this.client.DataProvider.redlock.acquire([ `config:${context.guild!.id}` ]).then(async lock => {
                 const option = ConfigOptions[subcommand as keyof typeof ConfigOptions];
                 option.exec({ context: context, guild: guildData, lock: lock }).then(result => {
                     lock.release().catch(() => false);
