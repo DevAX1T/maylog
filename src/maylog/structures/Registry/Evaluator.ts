@@ -87,6 +87,14 @@ export = (dispatcher: Dispatcher, interaction: CommandInteraction) => {
                 content: `I cannot run this command. I'm missing the following channel permissions: ${missing.map(m => `\`${m}\``).join(', ')}`
             });
         }
+        if (channel && command.userPermissions && interaction.member) {
+            const permissions = interaction.guild?.members.cache.get(interaction.user.id)!.permissionsIn(channel as GuildTextBasedChannel)!;
+            const missing = permissions.missing(command.userPermissions);
+            if (missing.length > 0) return interaction.reply({
+                ephemeral: true,
+                content: `I cannot run this command. You're missing the following channel permissions: ${missing.map(m => `\`${m}\``).join(', ')}`
+            });
+        }
 
         const module = command.getModule()!;
         module.guard_preExecution(CommandContext).then(async preExecutionResult => {
