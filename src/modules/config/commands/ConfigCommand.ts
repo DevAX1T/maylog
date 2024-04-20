@@ -36,23 +36,22 @@ export = class Command extends MaylogCommand {
             const subcommand = context.arguments.getSubcommand();
             await context.deferReply({ ephemeral: true });
             const guildData = await this.client.DataProvider.guilds.fetch(context.guild!.id);
-            context.editReply('valid');
-            // this.client.DataProvider.redlock.acquire([ `config:${context.guild!.id}` ]).then(async lock => {
-            //     const option = ConfigOptions[subcommand as keyof typeof ConfigOptions];
-            //     option.exec({ context: context, guild: guildData, lock: lock }).then(result => {
-            //         lock.release().catch(() => false);
-            //         context.editReply(result).catch(() => false);
-            //         return resolve(MaylogEnum.CommandResult.Success);
-            //     }).catch(error => {
-            //         if (typeof error !== 'string') Sentry.captureException(error);
-            //         context.editReply('An unknown error occurred when trying to edit the server.').catch(() => false);
-            //         lock.release().catch(() => false);
-            //         return resolve(MaylogEnum.CommandResult.Error);
-            //     });
-            // }).catch(() => {
-            //     context.editReply(errors.ConfigAcquireLock).catch(() => false);
-            //     return resolve(MaylogEnum.CommandResult.Error)
-            // });
+            this.client.DataProvider.redlock.acquire([ `config:${context.guild!.id}` ]).then(async lock => {
+                const option = ConfigOptions[subcommand as keyof typeof ConfigOptions];
+                option.exec({ context: context, guild: guildData, lock: lock }).then(result => {
+                    lock.release().catch(() => false);
+                    context.editReply(result).catch(() => false);
+                    return resolve(MaylogEnum.CommandResult.Success);
+                }).catch(error => {
+                    if (typeof error !== 'string') Sentry.captureException(error);
+                    context.editReply('An unknown error occurred when trying to edit the server.').catch(() => false);
+                    lock.release().catch(() => false);
+                    return resolve(MaylogEnum.CommandResult.Error);
+                });
+            }).catch(() => {
+                context.editReply(errors.ConfigAcquireLock).catch(() => false);
+                return resolve(MaylogEnum.CommandResult.Error)
+            });
         });
     }
 }
