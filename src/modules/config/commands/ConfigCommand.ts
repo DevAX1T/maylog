@@ -24,7 +24,7 @@ export = class Command extends MaylogCommand {
     constructor(client: MaylogClient) {
         super(client, {
             name: 'config',
-            description: 'Configure mayLOG',
+            description: 'Configure ActionLOG',
             module: 'info',
             arguments: commandArguments,
             guildOnly: true,

@@ -377,7 +377,7 @@ export default <ActionData>{
             const presetColor = context.arguments.getString('preset_color');
             const hexColor = context.arguments.getString('hex_color');
             if (presetColor && hexColor) return 'You must pick either `hex_color` **OR** `preset_color`.';
-            embed.setColor(colors.fromString((presetColor || hexColor) || 'mayLOG'));
+            embed.setColor(colors.fromString((presetColor || hexColor) || 'ActionLOG'));
             embed.setDescription(message);
         }
     },

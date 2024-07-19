@@ -9,15 +9,15 @@ export = class HelpCommand extends MaylogCommand {
     constructor(client: MaylogClient) {
         super(client, {
             name: 'help',
-            description: 'Get help with mayLOG.',
+            description: 'Get help with ActionLOG.',
             module: 'core',
             cooldown: 2000
         }); 
     } 
     async run(context: MaylogCommandContext) {
         const embed = new MessageEmbed()
-            .setTitle('mayLOG Help')
-            .setColor(Colors.fromString('mayLOG'))
+            .setTitle('ActionLOG Help')
+            .setColor(Colors.fromString('ActionLOG'))
             .setDescription(stripIndents`
                 I have no prefix; I use slash commands. To find my commands, simply press \`/\` and look at what pops up!
                 If you encounter any issues, you can always run ${this.client.getCommandString('diagnose')} which will show you the potential issues with a command.

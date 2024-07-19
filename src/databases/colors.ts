@@ -3,7 +3,7 @@ function rgb(r: number, g: number, b: number): number {
 }
 
 const colors = {
-    mayLOG: rgb(37, 183, 211),
+    ActionLOG: rgb(37, 183, 211),
     aqua: rgb(26,188,156),
     black: rgb(1, 1, 1),
     darkLightBlue: rgb(42, 114, 199),
