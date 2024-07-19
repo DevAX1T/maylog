@@ -19,7 +19,7 @@ export default class MessageCreateEvent extends MaylogEvent<'messageCreate'> {
             const mention = `<@${this.client.user!.id}>`;
             if (message.content.replace('!', '') !== mention) return;
             if (USER_CACHE.has(message.author.id)) return;
-            USER_CACHE.set(message.author.username, true);
+            USER_CACHE.set(message.author.id, true);
             // const helpId = this.client.application!.commands.cache.find(c => c.name === 'help')?.id
             // const helpCommand = helpId ? `</help:${helpId}>` : 'the `/help` command';
             // const diagnoseId = this.client.application!.commands.cache.find(c => c.name === 'diagnose')?.id;
