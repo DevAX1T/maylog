@@ -203,7 +203,7 @@ export = class DeptActionCommand extends MaylogCommand {
 
             let isProcessed = false;
             let timeout!: NodeJS.Timeout;
-            const continueProcess = (interaction: ButtonInteraction) => {
+            const continueProcess = async (interaction: ButtonInteraction) => {
                 isProcessed = true;
                 this.client.removeListener('interactionCreate', listener);
                 clearTimeout(timeout);
@@ -212,13 +212,24 @@ export = class DeptActionCommand extends MaylogCommand {
                     return resolve(MaylogEnum.CommandResult.Success);
                 }
                 // Get the log channel
-                const actionLogChannel = context.guild!.channels.cache.find(channel => {
-                    const actionChannel = guildData.config.channels.action;
-                    const awardChannel = guildData.config.channels.award;
-                    if (subcommand == 'award' && (awardChannel === channel.id || channel.name == 'award-logs')) return true;
-                    if (actionChannel === channel.id) return true;
-                    return channel.name === 'department-logs';
+                // attempt to cache the channel
+                // no idea if caching is needed tbh it was prob just a return error
+                const actionChannelId = guildData.config.channels.action;
+                const awardChannelId = guildData.config.channels.award;
+                try {
+                    if (actionChannelId) await context.client.channels.fetch(actionChannelId);
+                    if (awardChannelId) await context.client.channels.fetch(awardChannelId);
+                } catch (e) { console.log(e) };
 
+                const actionLogChannel = context.guild!.channels.cache.find(channel => {
+                    // console.log(subcommand, awardChannelId, channel.id, awardChannelId === channel.id, channel.name);
+                    if (subcommand == 'award') {
+                        if (awardChannelId === channel.id) return true;
+                        return channel.name == 'award-logs';
+                    } else {
+                        if (actionChannelId === channel.id) return true;
+                        return channel.name == 'department-logs';
+                    }
                 }) as GuildTextBasedChannel | undefined;
                 if (!actionLogChannel) {
                     editReply(errors.NoLogChannel, [], interaction);
