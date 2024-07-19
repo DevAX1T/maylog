@@ -374,11 +374,12 @@ export default <ConfigData>{
                 description: 'What type of action?',
                 type: MaylogEnum.Argument.String,
                 choices: [
-                    { value: 'action',         name: 'Department Action Log'  },
-                    // { value: 'action_request', name: 'Action Requests'        },
-                    // { value: 'loa_request',    name: 'LOA Requests'           },
-                    // { value: 'activity',       name: 'Activity Log'           },
-                    // { value: 'activity_ance',  name: 'Activity Announcements' }
+                    { value: 'action',         name: 'Department Action Log'     },
+                    { value: 'award',          name: 'Department Award Channel'  }
+                    // { value: 'action_request', name: 'Action Requests'           },
+                    // { value: 'loa_request',    name: 'LOA Requests'              },
+                    // { value: 'activity',       name: 'Activity Log'              },
+                    // { value: 'activity_ance',  name: 'Activity Announcements'    }
                 ]
             },
             {
