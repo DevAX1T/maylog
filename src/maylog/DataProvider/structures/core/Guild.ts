@@ -57,6 +57,8 @@ export interface IMaylogGuild {
             activity_ance: string;
             /** <PagerName, PagerChannel> */
             pager: Record<string, string>;
+            /** Where awards are sent */
+            award: string;
         };
         DMs: {
             admin_leave: string;
@@ -120,6 +122,7 @@ export default <IMaylogGuild>{
             /** Where all activity log submissions are sent */
             activityLog: '',
             activity_ance: '',
+            award: '',
             pager: {}
         },
         awards: [],
