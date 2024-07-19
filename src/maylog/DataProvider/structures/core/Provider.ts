@@ -3,7 +3,7 @@ import { RedisOptions } from 'ioredis'
 export interface IProviderOptions {
     mongo: {
         srv: string;
-        clientOptions: MongoClientOptions;
+        clientOptions?: MongoClientOptions;
     };
     redis: {
         clientOptions: RedisOptions;

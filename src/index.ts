@@ -14,8 +14,7 @@ dotenv.config();
 const HARDCODED_DISABLED_COMMANDS: string[] = []; // no clue if this even works tbh
 const PROVIDER_INFORMATION: IProviderOptions = {
     mongo: {
-        srv: process.env.MONGO_URI as string,
-        clientOptions: { tlsCAFile: path.join('certificates', Constants.dbName.mongoCertificationName) }
+        srv: process.env.MONGO_URI as string
     },
     redis: {
         clientOptions: {
