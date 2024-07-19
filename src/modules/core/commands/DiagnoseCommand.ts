@@ -96,7 +96,7 @@ export = class DiagnoseCommand extends MaylogCommand {
             } else info.push(`This module is enabled.`);
         }
         const embed = new MessageEmbed()
-            .setColor(issues.length >= 1 ? colors.fromString('red') : colors.fromString('mayLOG'))
+            .setColor(issues.length >= 1 ? colors.fromString('red') : colors.fromString('ActionLOG'))
             .setTitle(type)
             .setDescription(`The diagnosis for \`${type.toLowerCase()}\` can be found below.`)
             .setFooter({ text: id })

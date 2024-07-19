@@ -25,7 +25,7 @@ export default class SuggestionEvent extends MaylogEvent<'interactionCreate'> {
                     return;
                 }
                 const embed = new MessageEmbed()
-                    .setColor(colors.fromString('mayLOG'))
+                    .setColor(colors.fromString('ActionLOG'))
                     .setTitle('Suggestion')
                     .setDescription('A new suggestion was received')
                     .setTimestamp(Date.now())

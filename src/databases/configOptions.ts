@@ -1,19 +1,15 @@
-import { ColorResolvable, GuildMember, MessageEmbed, InteractionReplyOptions, GuildTextBasedChannel } from 'discord.js';
-import { DateTime } from 'luxon';
+import { ChannelType, MaylogEnum, UserPermissions } from '../maylog';
 import { IMaylogGuild } from '../maylog/DataProvider';
 import { Lock } from '../maylog/DataProvider/Redlock';
-import { MaylogCommandContext, MaylogArgument } from '../maylog/structures/MaylogCommand';
-import { ChannelType, MaylogEnum, UserPermissions } from '../maylog';
-import { oneLine, stripIndents } from 'common-tags';
+import { MaylogArgument, MaylogCommandContext } from '../maylog/structures/MaylogCommand';
+import { GuildTextBasedChannel, InteractionReplyOptions, MessageEmbed } from 'discord.js';
 import * as Sentry from '@sentry/node';
 import colors from './colors';
-import Constants from '../Constants';
 import contacts from './contacts';
+import emojis from './emojis';
 import errors from './errors';
 import Global from '../Global';
-import ms from '../util/ms';
 import validator from 'validator';
-import emojis from './emojis';
 
 interface IData {
     context: MaylogCommandContext;
@@ -49,6 +45,37 @@ const REPLACE_REGEX = /<@&|>/g;
 // todo: add a /alert system?
 // todo: when people use admin_leave, add a notice saying it no longer DMs people. Maybe implement in the future?
 export default <ConfigData>{
+    set_pager: {
+        description: 'Configure the pager.',
+        arguments: [
+            {
+                name: 'modifier',
+                description: 'Add or remove a pager',
+                type: MaylogEnum.Argument.String,
+                choices: [
+                    { name: 'Add a pager', value: 'add' },
+                    { name: 'Removea pager', value: 'remove' },
+                ]
+            },
+            {
+                name: 'name',
+                description: 'The name of the pager.',
+                type: MaylogEnum.Argument.String,
+                optional: true
+            },
+            {
+                name: 'channel',
+                description: 'The channel the pager should log to.',
+                type: MaylogEnum.Argument.Channel,
+                channelTypes: [ ChannelType.GuildText ],
+                optional: true
+            }
+        ],
+        exec: async (data) => {
+
+            return Promise.resolve('');
+        }
+    },
     suspension_contact_message: {
         description: 'Set the contact message for when duties are suspended.',
         arguments: [
@@ -91,6 +118,136 @@ export default <ConfigData>{
             try {
                 await data.context.client.DataProvider.guilds.update(data.guild._id, data.guild);
                 return Promise.resolve({ embeds: [ embeds.success(`I successfully ${gt(status)} autorole.`, gt(oldValue)) ]     });
+            } catch (error) {
+                Sentry.captureException(error);
+                return Promise.reject(error);
+            }
+        }
+    },
+    // todo: Reqaction for 2.1.0
+    set_awards: {
+        description: 'Set department awards',
+        arguments: [
+            {
+                name: 'modifier',
+                description: 'Add/remove a single award or replace all awards.',
+                type: MaylogEnum.Argument.String,
+                choices: [
+                    { value: 'add',     name: 'Add multiple awards'    },
+                    { value: 'add',     name: 'Add a single award'     },
+                    { value: 'remove',  name: 'Remove a single award'  },
+                    { value: 'remove',  name: 'Remove multiple awards' },
+                    { value: 'replace', name: 'Replace all awards'     },
+                ],
+            },
+            {
+                name: 'awards',
+                description: 'SEPARATE AWARDS BY COMMA. LEAVE BLANK TO RESET',
+                type: MaylogEnum.Argument.String,
+                optional: true,
+                maxLength: 350
+            }
+        ],
+        exec: async (data) => {
+            // todo: finish this. Also add department action command
+            const awards = data.context.arguments.getString('awards')?.split(',').map(a => {
+                return a.replaceAll('`', '').replaceAll('*', '').trimStart().trimEnd()
+            }).filter(a => !!a);
+            const modifier = data.context.arguments.getString('modifier') as 'add' | 'remove' | 'replace' | undefined;
+            const oldValue = data.guild.config.awards;
+
+            if (modifier === 'add') {
+                if (!awards) return Promise.resolve(errors.NoAward);
+                const awardSet = new Set<string>(oldValue);
+                awards.forEach(a => awardSet.add(a));
+                data.guild.config.awards = [ ...awardSet ];
+            } else if (modifier === 'remove') {
+                if (!awards) return Promise.resolve(errors.NoAward);
+                const awardSet = new Set<string>(oldValue);
+                awards.forEach(a => {
+                    awardSet.forEach(r => {
+                        if (r.toLowerCase() === a.toLowerCase()) awardSet.delete(r);
+                    });
+                });
+                data.guild.config.awards  = [ ...awardSet ];
+            } else if (modifier === 'replace') {
+                data.guild.config.awards = awards ? awards : [];
+            }
+            let oldAwards: string;
+            if (oldValue.length === 0) {
+                oldAwards = 'No awards set.';
+            } else {
+                oldAwards = oldValue.map(v => `\`${v}\``).join(', ');
+                oldAwards += `\n\nIf you made a mistake, paste this in the \`awards\` argument to revert your change: \`${oldValue.map(id => `${id}`).join(', ')}\``;
+            }
+            try {
+                await data.context.client.DataProvider.guilds.update(data.guild._id, data.guild);
+                return Promise.resolve({ embeds: [ embeds.success('I successfully edited the awards', oldAwards ) ] })
+            } catch (error) {
+                Sentry.captureException(error);
+                return Promise.reject(error);
+            }
+            // return Promise.resolve('');
+        },
+    },
+    set_ranks: {
+        description: 'Set department ranks. Ensure they are exact Roblox group names.',
+        arguments: [
+            {
+                name: 'modifier',
+                description: 'Add/remove a single role or replace all roles.',
+                type: MaylogEnum.Argument.String,
+                choices: [
+                    { value: 'add',     name: 'Add multiple roles'    },
+                    { value: 'add',     name: 'Add a single role'     },
+                    { value: 'remove',  name: 'Remove a single role'  },
+                    { value: 'remove',  name: 'Remove multiple roles' },
+                    { value: 'replace', name: 'Replace all roles'     },
+                ]
+            },
+            {
+                name: 'roles',
+                description: 'What roles do you want to set? Mention the role(s).',
+                type: MaylogEnum.Argument.String,
+                optional: true
+            },
+        ],
+        exec: async (data) => {
+            const rolesArg = data.context.arguments.getString('roles')!;
+            const modifier = data.context.arguments.getString('modifier') as 'add' | 'remove' | 'replace' | undefined;
+            const matchedRoles = rolesArg.match(REGEX);
+            // if (!matchedRoles && modifier !== 'replace') return Promise.resolve({ embeds: [ embeds.error(errors.ConfigNoRoleModifier) ] });
+
+            const rolesPrelim = matchedRoles!.map(id => id.replace(REPLACE_REGEX, ''));
+            const roles = new Set<string>();
+            rolesPrelim.forEach(r => {
+                if (!data.context.guild!.roles.cache.has(r)) return;
+                roles.add(r);
+            });
+            const oldValue = data.guild.config.ranks;
+            if (modifier === 'add') {
+                const oldSet = new Set<string>(oldValue);
+                roles.forEach(r => oldSet.add(r));
+                data.guild.config.ranks = [ ...oldSet ];
+            } else if (modifier === 'remove') {
+                const oldSet = new Set<string>(oldValue);
+                roles.forEach(r => oldSet.delete(r));
+                data.guild.config.ranks = [ ...oldSet ];
+            } else if (modifier === 'replace') {
+                const replaceSet = new Set<string>();
+                roles.forEach(r => replaceSet.add(r));
+                data.guild.config.ranks = [ ...replaceSet ];
+            }
+            let oldRoles: string;
+            if (oldValue.length === 0) {
+                oldRoles = 'No roles set.';
+            } else {
+                oldRoles = oldValue.map(id => `<@&${id}>`).join(', ');
+                oldRoles += `\n\nIf you made a mistake, paste this in the \`roles\` argument to revert your change: \`${oldValue.map(id => `<@&${id}>`).join(' ')}\``;
+            }
+            try {
+                await data.context.client.DataProvider.guilds.update(data.guild._id, data.guild);
+                return Promise.resolve({ embeds: [ embeds.success('I successfully edited the ranks', oldRoles) ] });
             } catch (error) {
                 Sentry.captureException(error);
                 return Promise.reject(error);
@@ -171,7 +328,9 @@ export default <ConfigData>{
                     roles.forEach(r => roleSet.delete(r));
                     (data.guild.config.roles[action] as string[]) = [ ...roleSet ];
                 } else if (modifier === 'replace') {
-                    (data.guild.config.roles[action] as string[]) = [ ...roles ];
+                    const roleSet = new Set<string>();
+                    roles.forEach(r => roleSet.add(r));
+                    (data.guild.config.roles[action] as string[]) = [ ...roleSet ];
                 }
             } else {
                 if (modifier === 'add') {
@@ -239,7 +398,7 @@ export default <ConfigData>{
                 return Promise.resolve({ embeds: [ embeds.error(errors.NoPermissionsPreliminary) ] });
             }
             const oldChannel = data.guild.config.channels[action as keyof typeof data.guild.config.channels];
-            data.guild.config.channels[action as keyof typeof data.guild.config.channels] = channel.id;
+            (data.guild.config.channels as any)[action as keyof typeof data.guild.config.channels] = channel.id;
             try {
                 await data.context.client.DataProvider.guilds.update(data.guild._id, data.guild);
                 return Promise.resolve({ embeds: [ embeds.success('I successfully edited the channel', `<@&${oldChannel}>`) ] });

@@ -7,7 +7,7 @@ export = class DeveloperCommand extends MaylogCommand {
     constructor(client: MaylogClient) {
         super(client, {
             name: 'suggest',
-            description: 'Suggest a feature for mayLOG.',
+            description: 'Suggest a feature for ActionLOG.',
             module: 'core',
             cooldown: 60000 * 5
         });

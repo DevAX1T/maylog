@@ -1,16 +1,15 @@
-import { ColorResolvable, GuildMember, MessageEmbed } from 'discord.js';
+import { GuildMember, MessageEmbed } from 'discord.js';
 import { DateTime } from 'luxon';
 import { IMaylogGuild } from '../maylog/DataProvider';
 import { MaylogCommandContext, MaylogArgument } from '../maylog/structures/MaylogCommand';
 import { MaylogEnum } from '../maylog';
-import { oneLine, stripIndents } from 'common-tags';
+import { stripIndents } from 'common-tags';
 import colors from './colors';
 import Constants from '../Constants';
 import contacts from './contacts';
 import errors from '../databases/errors';
 import examples from '../databases/examples';
 import ms from '../util/ms';
-import Global from '../Global';
 
 const ARGUMENTS = {
     expiration: {
@@ -124,17 +123,36 @@ interface ActionData {
 // todo: bulk actions (sends in multiple messages; ratelimit heavily)
 // todo: change everything to webhooks (and auto make them too)
 export default <ActionData>{
+    award: {
+        description: 'Log an award',
+        arguments: [
+            {
+                name: 'award',
+                description: 'What award do you want to issue?',
+                type: MaylogEnum.Argument.String,
+                autocomplete: true
+            }
+        ],
+        exec: (data) => {
+            const { embed, subject, guild } = data;
+            const award = data.context.arguments.getString('award')!;
+            if (award === '-') return 'You need to provide a valid award.';
+            if (!guild.config.awards.includes(award)) return errors.NoAward;
+            embed.setColor(colors.fromString('brightGold'));
+            embed.setDescription(`**${subject.username}** has been issued the **${award}**.`);
+        }
+    },
     appeal: {
-        description: 'Log an appeal',
+        description: 'Log an appeal.',
         arguments: [
             {
                 name: 'type',
                 description: 'What is the type of appeal?',
                 type: MaylogEnum.Argument.String,
                 choices: [
-                    { value: 'activity_warning', name: 'Activity warning'    },
-                    { value: 'recorded_warning', name: 'Recorded warning'    },
-                    { value: 'verbal_warning',   name: 'Verbal warning'      },
+                    { value: 'activity_warning', name: 'Activity Warning'    },
+                    { value: 'recorded_warning', name: 'Recorded Warning'    },
+                    { value: 'verbal_warning',   name: 'Verbal Warning'      },
                     { value: 'disciplinary',     name: 'Disciplinary Action' }
                 ]
             }
@@ -273,7 +291,7 @@ export default <ActionData>{
         }
     },
     transfer_demote: {
-        description: 'Log a division transfer and demotion',
+        description: 'Log a division transfer and demotion.',
         arguments: [ ARGUMENTS.rankDemote, ARGUMENTS.divisionTransfer ],
         exec: (data) => {
             const { embed, subject, context } = data;
@@ -329,7 +347,7 @@ export default <ActionData>{
         }
     },
     custom: {
-        description: 'Log a custom action',
+        description: 'Log a custom action.',
         noSubject: true,
         arguments: [
             {
@@ -359,7 +377,7 @@ export default <ActionData>{
             const presetColor = context.arguments.getString('preset_color');
             const hexColor = context.arguments.getString('hex_color');
             if (presetColor && hexColor) return 'You must pick either `hex_color` **OR** `preset_color`.';
-            embed.setColor(colors.fromString((presetColor || hexColor) || 'mayLOG'));
+            embed.setColor(colors.fromString((presetColor || hexColor) || 'ActionLOG'));
             embed.setDescription(message);
         }
     },

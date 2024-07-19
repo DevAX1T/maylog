@@ -55,10 +55,14 @@ export interface IMaylogGuild {
             activityLog: string;
             /** Activity log channel */
             activity_ance: string;
+            /** <PagerName, PagerChannel> */
+            pager: Record<string, string>;
         };
         DMs: {
             admin_leave: string;
         };
+        /** An array of department awards */
+        awards: string[];
         /** Typically webhooks */
         secrets: Record<string, string>;
     }
@@ -115,8 +119,10 @@ export default <IMaylogGuild>{
             actionRequest: '',
             /** Where all activity log submissions are sent */
             activityLog: '',
-            activity_ance: ''
+            activity_ance: '',
+            pager: {}
         },
+        awards: [],
         DMs: {
             admin_leave: ''
         },

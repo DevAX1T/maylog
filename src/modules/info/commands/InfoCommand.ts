@@ -11,17 +11,17 @@ export = class InfoCommand extends MaylogCommand {
     constructor(client: MaylogClient) {
         super(client, {
             name: 'info',
-            description: 'Display information about mayLOG such as usage, statistics, and more.',
+            description: 'Display information about ActionLOG such as usage, statistics, and more.',
             module: 'info'
         });
     }
     async run(context: MaylogCommandContext) {
         const embed = new MessageEmbed()
-            .setTitle('mayLOG Information')
-            .setColor(Colors.fromString('mayLOG'))
+            .setTitle('ActionLOG Information')
+            .setColor(Colors.fromString('ActionLOG'))
             .setDescription(stripIndents`
-                mayLOG is a Discord bot designed to assist departments with administrative functions, such as department actions, activity logs, action requests, and more.
-                I'm also open source! You can see my [version 2](https://github.com/maylog-rbx/maylog) code, or my old [version 1](https://github.com/DevAX1T/mayLOG_V1) code.
+                ActionLOG is a Discord bot designed to assist departments with administrative functions, such as department actions, activity logs, action requests, and more.
+                I'm also open source! You can see my [version 2](https://github.com/DevAX1T/mayLOG) code, or my old [version 1](https://github.com/DevAX1T/mayLOG_V1) code.
             `)
             .setFields([
                 { name: 'Bot Developer', value: 'devax1t#0 / [DevAX1T](https://roblox.com/users/125196014/profile)', inline: true },
@@ -32,9 +32,9 @@ export = class InfoCommand extends MaylogCommand {
                     inline: true
                 },
                 {
-                    name: 'How do I use mayLOG?',
+                    name: 'How do I use ActionLOG?',
                     value: oneLine`
-                    mayLOG is available for anyone to use, aimed at Roblox communities! Bot availability may vary as the server limit is capped at 100.
+                    ActionLOG is available for anyone to use, aimed at Roblox communities! Bot availability may vary as the server limit is capped at 100.
                     More information can be found in the [documentation](${Constants.docsLink}).`
                 },
                 { name: 'Version', value: `\`v${Constants.packageJSON.version}\``, inline: true },

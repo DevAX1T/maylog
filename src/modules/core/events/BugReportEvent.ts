@@ -25,7 +25,7 @@ export default class BugReportEvent extends MaylogEvent<'interactionCreate'> {
                     return;
                 }
                 const embed = new MessageEmbed()
-                    .setColor(colors.fromString('mayLOG'))
+                    .setColor(colors.fromString('ActionLOG'))
                     .setTitle('Bug Report')
                     .setDescription('A new bug report was received')
                     .setTimestamp(Date.now())
