@@ -215,8 +215,8 @@ export = class DeptActionCommand extends MaylogCommand {
                 const actionLogChannel = context.guild!.channels.cache.find(channel => {
                     const actionChannel = guildData.config.channels.action;
                     const awardChannel = guildData.config.channels.award;
-                    if (subcommand == 'award' && (awardChannel && actionChannel === channel.id || channel.name == 'award-logs')) return true;
-                    if (actionChannel) return actionChannel === channel.id;
+                    if (subcommand == 'award' && (awardChannel === channel.id || channel.name == 'award-logs')) return true;
+                    if (actionChannel === channel.id) return true;
                     return channel.name === 'department-logs';
 
                 }) as GuildTextBasedChannel | undefined;
