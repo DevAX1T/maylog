@@ -10,10 +10,10 @@ const BASE_ROVER_URL = `https://registry.rover.link/api`;
 const FETCH_LUA_SCRIPT = `
 local user = ARGV[1];
 
-local res = redis.pcall('get', '${Global.keys.usersLookup}/' .. tostring(user));
+local res = redis.pcall('get', '${Global.keys.usersLookup}:' .. tostring(user));
 if ((type(res) == 'table') or not res) then return 0 end;
 
-local user = redis.pcall('get', '${Global.keys.users}/' .. tostring(res));
+local user = redis.pcall('get', '${Global.keys.users}:' .. tostring(res));
 if not user then return 0 end;
 if user['err'] then return 0 end;
 
@@ -58,7 +58,7 @@ function findAccount(guildId: string, userId: number): Promise<string> {
 }
 function cachedFromDiscord(provider: DataProvider, guildId: string, userId: string): Promise<IRobloxData> {
     return new Promise(async (resolve, reject) => {
-        provider.redis.get(`${Global.keys.users}/${userId}`).then(async user => {
+        provider.redis.get(`${Global.keys.users}:${userId}`).then(async user => {
             if (user) {
                 const parsedUser = JSON.parse(user) as IRobloxData;
                 if (doRecache(parsedUser.cachedOn!)) {
@@ -123,8 +123,8 @@ async function createRedisCache(provider: DataProvider, rodata: any, guildId: st
                 }
             }
             rodata.cachedOn = Date.now() + (3600 * 3 * 1000);
-            await provider.redis.psetex(`${Global.keys.users}/${account}`, Constants.expirationMs.user, JSON.stringify(rodata)).catch(() => false);
-            await provider.redis.psetex(`${Global.keys.usersLookup}/${rodata.user_id}`, Constants.expirationMs.user - 500, account).catch(() => false);
+            await provider.redis.psetex(`${Global.keys.users}:${account}`, Constants.expirationMs.user, JSON.stringify(rodata)).catch(() => false);
+            await provider.redis.psetex(`${Global.keys.usersLookup}:${rodata.user_id}`, Constants.expirationMs.user - 500, account).catch(() => false);
             resolve();
         } catch { resolve() }
     });
