@@ -343,7 +343,7 @@ export default <ActionData>{
         exec: (data) => {
             const { embed, subject } = data;
             embed.setColor(colors.fromString('blue'));
-            embed.setDescription(`${subject} is now longer on a **leave of absence**.`);
+            embed.setDescription(`${subject.username} is no longer on a **leave of absence**.`);
         }
     },
     custom: {
