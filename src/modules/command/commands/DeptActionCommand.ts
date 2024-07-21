@@ -221,16 +221,27 @@ export = class DeptActionCommand extends MaylogCommand {
                     if (awardChannelId) await context.client.channels.fetch(awardChannelId);
                 } catch (e) { console.log(e) };
 
-                const actionLogChannel = context.guild!.channels.cache.find(channel => {
+                let actionLogChannel = context.guild!.channels.cache.find(channel => {
                     // console.log(subcommand, awardChannelId, channel.id, awardChannelId === channel.id, channel.name);
                     if (subcommand == 'award') {
                         if (awardChannelId === channel.id) return true;
-                        return channel.name == 'award-logs';
+                        // return channel.name == 'award-logs';
                     } else {
                         if (actionChannelId === channel.id) return true;
-                        return channel.name == 'department-logs';
+                        // return channel.name == 'department-logs';
                     }
+                    return false;
                 }) as GuildTextBasedChannel | undefined;
+                if (!actionLogChannel) {
+                    actionLogChannel = context.guild!.channels.cache.find(channel => {
+                        // console.log(subcommand, awardChannelId, channel.id, awardChannelId === channel.id, channel.name);
+                        if (subcommand == 'award') {
+                            return channel.name == 'award-logs';
+                        } else {
+                            return channel.name == 'department-logs';
+                        }
+                    }) as GuildTextBasedChannel | undefined;
+                }
                 if (!actionLogChannel) {
                     editReply(errors.NoLogChannel, [], interaction);
                     return resolve(MaylogEnum.CommandResult.Success);
