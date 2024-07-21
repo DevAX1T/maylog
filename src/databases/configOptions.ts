@@ -111,9 +111,9 @@ export default <ConfigData>{
             }
         ],
         exec: async (data) => {
-            const status = data.context.arguments.getString('message') === 'enabled' ? true : false;
+            const status = data.context.arguments.getString('status') === 'enable' ? true : false;
             const oldValue = data.guild.config.autoRole;
-            const gt = (status: boolean) => !!status ? 'enabled' : 'disabled';
+            const gt = (nStatus: boolean) => nStatus ? 'enabled' : 'disabled';
             data.guild.config.autoRole = status;
             try {
                 await data.context.client.DataProvider.guilds.update(data.guild._id, data.guild);
