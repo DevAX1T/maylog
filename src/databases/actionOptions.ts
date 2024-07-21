@@ -214,6 +214,7 @@ export default <ActionData>{
     },
     probation: {
         description: 'Log a probationary period.',
+        arguments: [ ARGUMENTS.expiration ],
         exec: (data) => {
             const { embed, subject, context } = data;
             const [ expirationMs, expStr ] = getExpirationMs(context.arguments.getString('expiration')!);
