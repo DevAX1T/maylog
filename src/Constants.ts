@@ -19,7 +19,7 @@ export default {
         mongoCertificationName: 'mongodb-maylog.crt'
     },
     RoVer_Bot_ID: '298796807323123712',
-    intents: 43,//811,
+    intents: 41,//811,
     defaultPrefix: ';',
     developerIds: [ '212772501141323776' ],
     /** Currency symbol */
