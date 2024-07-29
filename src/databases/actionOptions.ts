@@ -210,6 +210,15 @@ export default <ActionData>{
             const { embed, subject } = data;
             embed.setColor(colors.fromString('blue'));
             embed.setDescription(`**${subject.username}** is no longer on **administrative leave**.`);
+        },
+        autoRole: (data) => {
+            return new Promise(async (resolve, reject) => {
+                const role = data.guild.config.roles.admin_leave;
+                if (!role) return reject('No auto-role for this action has been set.');
+                data.context.guild!.members.fetch(data.subject.account!).then(user => {
+                    user.roles.remove(role).then(() => resolve()).catch(() => reject('Could not de-role user.'));
+                }).catch(() => reject('Could not find guild member.'));
+            });
         }
     },
     probation: {

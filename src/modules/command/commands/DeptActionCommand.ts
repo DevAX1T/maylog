@@ -263,7 +263,7 @@ export = class DeptActionCommand extends MaylogCommand {
                             context: context,
                             embed: embed,
                             guild: guildData,
-                            subject: { username: subjectData!.username },
+                            subject: { username: subjectData!.username, user_id: String(subjectData!.user_id), account: subjectData.account },
                             executor: { username: executorData.username, user_id: executorData.user_id, account: (context.author as GuildMember) }
                         }).catch(error => {
                             interaction.followUp({ ephemeral: true, content: `I experienced an error while trying to auto-role the subject: ${error}` }).catch(() => false);

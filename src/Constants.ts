@@ -19,7 +19,7 @@ export default {
         mongoCertificationName: 'mongodb-maylog.crt'
     },
     RoVer_Bot_ID: '298796807323123712',
-    intents: 811,
+    intents: 43,//811,
     defaultPrefix: ';',
     developerIds: [ '212772501141323776' ],
     /** Currency symbol */
@@ -40,6 +40,7 @@ export default {
         /** Log channel for suggestions */
         suggestions: '1119710538977525791'
     },
+    terms_and_privacy: 'https://hackmd.io/@DevAX1T/BJTrwV3u0',
     supportInvite: 'https://discord.gg/ZdHbP6ZwPK',
     docsLink: 'https://hackmd.io/@DevAX1T/HkFI5jDzh',
     inviteLink: `https://discord.com/oauth2/authorize?client_id=1096613340714893362&permissions=275884862544&scope=bot+applications.commands`,

@@ -31,10 +31,15 @@ export = class InfoCommand extends MaylogCommand {
                     value: `[HackMD Documention](${Constants.docsLink})`,
                     inline: true
                 },
+                // {
+                //     name: 'Legal',
+                //     value: '[Terms of Service/Privacy Policy](https://hackmd.io/@DevAX1T/BJTrwV3u0)',
+                //     inline: true
+                // },
                 {
                     name: 'How do I use ActionLOG?',
                     value: oneLine`
-                    ActionLOG is available for anyone to use, aimed at Roblox communities! Bot availability may vary as the server limit is capped at 100.
+                    ActionLOG is available for anyone to use, aimed at Roblox communities!
                     More information can be found in the [documentation](${Constants.docsLink}).`
                 },
                 { name: 'Version', value: `\`v${Constants.packageJSON.version}\``, inline: true },
@@ -53,7 +58,11 @@ export = class InfoCommand extends MaylogCommand {
                 .setLabel('Support Server')
                 .setStyle('LINK')
                 .setURL(Constants.supportInvite);
-            const row = new MessageActionRow<MessageButton>().addComponents(DocumentationButton,  SupportServerButton);
+            const ToS = new MessageButton()
+                .setLabel('Terms of Service/Privacy Policy')
+                .setStyle('LINK')
+                .setURL('https://hackmd.io/@DevAX1T/BJTrwV3u0')
+            const row = new MessageActionRow<MessageButton>().addComponents(DocumentationButton,  SupportServerButton, ToS);
         try {
             await context.reply({ embeds: [ embed ],components: [ row ] });
             return Promise.resolve(MaylogEnum.CommandResult.Success);
