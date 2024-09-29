@@ -246,6 +246,13 @@ export = class DeptActionCommand extends MaylogCommand {
                     editReply(errors.NoLogChannel, [], interaction);
                     return resolve(MaylogEnum.CommandResult.Success);
                 }
+                if (actionLogChannel.type !== 'GUILD_TEXT') {
+                    editReply(`The action log channel must be a **text channel**. Unsupported type: ${
+                        actionLogChannel.type}`, [], interaction);
+                    console.log(`Attempt to log non-text for ${context.guild!.id}; ${
+                        actionLogChannel.type}; ${actionLogChannel.id || 'NO_ID'}`);
+                    return resolve(MaylogEnum.CommandResult.Success);
+                }
                 const hasPerms = actionLogChannel.permissionsFor(context.guild!.members.me!)
                     .has(UserPermissions.SendMessages + UserPermissions.EmbedLinks);
                 if (!hasPerms) {
