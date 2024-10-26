@@ -10,6 +10,9 @@ import Constants from '../../../Constants';
 import DeptActionUtil from '../../../util/DeptActionUtil';
 import emojis from '../../../databases/emojis';
 import errors from '../../../databases/errors';
+import { EmbedBuilder } from '@discordjs/builders';
+
+const IS_DISABLED = false;
 
 interface IRobloxData {
     username: string;
@@ -265,6 +268,25 @@ export = class DeptActionCommand extends MaylogCommand {
                         .setColor(colors.fromString('green'))
                         .setDescription(`${emojis.authorized} Action successfully logged: ${messageLink}`);
                     await interaction.update({ content: null, embeds: [ sentEmbed ], components: [] }).catch(() => {});
+                    if (IS_DISABLED) {
+                        const discontinueEmbed = new MessageEmbed()
+                            .setTitle('Discontinuation Notice')
+                            .setColor(colors.fromString('red'))
+                            .setDescription(stripIndents`
+                                ActionLOG will be closing its doors by 2024-11-07 as cluggas, a Clark County Moderator, has deceived administrators into
+                                believing that the owner of the bot, namely DevAX1T, has harrassed community members, resulting in his community removal.
+
+                                I do not wish to pay the hosting for a community that does not trust me. The bot was only up for Clark, which is the only
+                                large/notable ro-state that continues to use ActionLOG.
+
+                                There will no doubt be alternatives; you are encouraged to explore them. Regardless, be cautious and, ideally, ensure the bot is verified
+                                by Discord to discourage abuse.
+
+                                Best wishes,
+                                DevAX1T
+                            `);
+                        interaction.followUp({ embeds: [ discontinueEmbed ]}).catch(() => {});
+                    }
                     if (action.autoRole && guildData.config.autoRole) {
                         action.autoRole({
                             context: context,
