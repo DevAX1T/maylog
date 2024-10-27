@@ -67,6 +67,7 @@ export = class HelpCommand extends MaylogCommand {
                                 [Cluggas using DMs to further provoke me](https://imgur.com/a/toGYB0f)
                                 [Cluggas himself bringing this to the point of harassment](https://imgur.com/a/yBHcNae)
                                 [Owner brawladdie taking part in this](https://imgur.com/a/RpRkqzH)
+                                (brawladdie has ghosted me during this; lame_memes refuses to intervene)
                             `
                         }
                     ]);
