@@ -7,9 +7,9 @@ import Constants from '../../../../Constants';
 import MaylogEvent from '../../../../maylog/structures/MaylogEvent';
 
 
-export default class GuildDeleteLogEvent extends MaylogEvent<'guildCreate'> {
+export default class GuildDeleteLogEvent extends MaylogEvent<'guildDelete'> {
     public readonly name: string = 'GuildDeleteLogEvent';
-    public readonly code: NSClient.KeyofEvents = 'guildCreate';
+    public readonly code: NSClient.KeyofEvents = 'guildDelete';
     constructor(client: MaylogClient) {
         super(client);
     }
@@ -17,7 +17,7 @@ export default class GuildDeleteLogEvent extends MaylogEvent<'guildCreate'> {
         this.listener = async (guild) => {
             try {
                 const embed = new MessageEmbed()
-                .setTitle('Guild Created')
+                .setTitle('Guild Deleted')
                 .setDescription('A guild has been deleted.')
                 .setColor(colors.fromString('red'))
                 .addFields([
