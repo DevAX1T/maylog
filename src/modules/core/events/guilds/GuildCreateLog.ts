@@ -22,7 +22,8 @@ export default class GuildCreateLogEvent extends MaylogEvent<'guildCreate'> {
                     hasRover = true;
                 } catch {
                     hasRover = false;
-                    guild.leave();
+                    guild.leave().catch(() => false);
+                    return; // todo: if actionlog comes back, make future commands error instead "rover must be added for me to work"
                 }
                 const embed = new MessageEmbed()
                 .setTitle('Guild Created')

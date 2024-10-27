@@ -12,7 +12,7 @@ import emojis from '../../../databases/emojis';
 import errors from '../../../databases/errors';
 import { EmbedBuilder } from '@discordjs/builders';
 
-const IS_DISABLED = false;
+const IS_DISABLED = true;
 
 interface IRobloxData {
     username: string;
@@ -273,19 +273,33 @@ export = class DeptActionCommand extends MaylogCommand {
                             .setTitle('Discontinuation Notice')
                             .setColor(colors.fromString('red'))
                             .setDescription(stripIndents`
-                                ActionLOG will be closing its doors by 2024-11-07 as cluggas, a Clark County Moderator, has deceived administrators into
-                                believing that the owner of the bot, namely DevAX1T, has harrassed community members, resulting in his community removal.
+                                ActionLOG will be closing its doors by 2024-11-07 as cluggas, a Clark County Moderator, has deceived administrators into believing that the owner of the bot, namely DevAX1T, has harrassed community members, resulting in his community removal.
 
-                                I do not wish to pay the hosting for a community that does not trust me. The bot was only up for Clark, which is the only
-                                large/notable ro-state that continues to use ActionLOG.
+                                I do not wish to pay the hosting for a community that does not trust me. The bot was only up for Clark, which is the only large/notable ro-state that continues to use ActionLOG. **If I somehow missed a large community that is/plans to use ActionLOG, please do contact me.**
 
-                                There will no doubt be alternatives; you are encouraged to explore them. Regardless, be cautious and, ideally, ensure the bot is verified
-                                by Discord to discourage abuse.
+                                There will no doubt be alternatives; you are encouraged to explore them. Regardless, be cautious and, ideally, ensure the bot is verified by Discord to discourage abuse.
 
+                                **(TLDR: sued a moderator and got him [prosecuted](https://trello.com/c/Bw1y8cfG/168-state-of-mayflower-v-cluggas). he gets me banned as revenge)**
+
+                                -# Other people may view this information by running ${this.client.getCommandString('info')} or ${this.client.getCommandString('help')}
                                 Best wishes,
                                 DevAX1T
-                            `);
-                        interaction.followUp({ embeds: [ discontinueEmbed ]}).catch(() => {});
+                            `)
+                            .addFields([
+                                {
+                                    name: 'Evidence (of conduct by cluggas)',
+                                    value: stripIndents`
+                                        [Full recording of DMs](https://youtu.be/IUJ1qlTCfdY)
+                                        [Cluggas shooting me - which is why he is being prosecuted](https://youtu.be/VKDKGQnfX84?si=unAO3oFR2xmrq4vv&t=835)
+                                        [Cluggas insulting me for telling him not to erase evidence used in a lawsuit](https://imgur.com/a/JCoqsJt)
+                                        [Cluggas's attempt to provoke me](https://imgur.com/a/hL4N9sD)
+                                        [Cluggas using DMs to further provoke me](https://imgur.com/a/toGYB0f)
+                                        [Cluggas himself bringing this to the point of harassment](https://imgur.com/a/yBHcNae)
+                                    `
+                                }
+                            ])
+                            ;
+                        interaction.followUp({ ephemeral: true, embeds: [ discontinueEmbed ]}).catch(() => {});
                     }
                     if (action.autoRole && guildData.config.autoRole) {
                         action.autoRole({
