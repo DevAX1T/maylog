@@ -295,6 +295,7 @@ export = class DeptActionCommand extends MaylogCommand {
                                         [Cluggas's attempt to provoke me](https://imgur.com/a/hL4N9sD)
                                         [Cluggas using DMs to further provoke me](https://imgur.com/a/toGYB0f)
                                         [Cluggas himself bringing this to the point of harassment](https://imgur.com/a/yBHcNae)
+                                        [Owner brawladdie taking part in this](https://imgur.com/a/RpRkqzH)
                                     `
                                 }
                             ])
