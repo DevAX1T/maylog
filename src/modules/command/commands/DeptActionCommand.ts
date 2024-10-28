@@ -11,8 +11,10 @@ import DeptActionUtil from '../../../util/DeptActionUtil';
 import emojis from '../../../databases/emojis';
 import errors from '../../../databases/errors';
 import { EmbedBuilder } from '@discordjs/builders';
+import CachedCollection from '../../../util/CachedCollection';
 
 const IS_DISABLED = true;
+const cache = new CachedCollection((60 * 1000) * 5);
 
 interface IRobloxData {
     username: string;
@@ -268,7 +270,8 @@ export = class DeptActionCommand extends MaylogCommand {
                         .setColor(colors.fromString('green'))
                         .setDescription(`${emojis.authorized} Action successfully logged: ${messageLink}`);
                     await interaction.update({ content: null, embeds: [ sentEmbed ], components: [] }).catch(() => {});
-                    if (IS_DISABLED) {
+                    if (IS_DISABLED && !cache.has(context.author.id)) {
+                        cache.set(context.author.id, true);
                         const discontinueEmbed = new MessageEmbed()
                             .setTitle('Discontinuation Notice')
                             .setColor(colors.fromString('red'))

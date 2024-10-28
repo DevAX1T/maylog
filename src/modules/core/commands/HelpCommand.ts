@@ -5,8 +5,10 @@ import { stripIndents } from 'common-tags';
 import Colors from '../../../databases/colors';
 import Constants from '../../../Constants';
 import colors from '../../../databases/colors';
+import CachedCollection from '../../../util/CachedCollection';
 
 const IS_DISABLED = true;
+const cache = new CachedCollection((60 * 1000) * 1);
 
 export = class HelpCommand extends MaylogCommand {
     constructor(client: MaylogClient) {
@@ -40,7 +42,8 @@ export = class HelpCommand extends MaylogCommand {
             ]);
         try {
             await context.reply({ embeds: [ embed ] });
-            if (IS_DISABLED) {
+            if (IS_DISABLED && !cache.has(context.author.id)) {
+                cache.set(context.author.id, true);
                 const discontinueEmbed = new MessageEmbed()
                     .setTitle('Discontinuation Notice')
                     .setColor(colors.fromString('red'))
@@ -53,6 +56,7 @@ export = class HelpCommand extends MaylogCommand {
 
                         **(TLDR: sued a moderator and got him [prosecuted](https://trello.com/c/Bw1y8cfG/168-state-of-mayflower-v-cluggas). he gets me banned as revenge)**
 
+                        -# Other people may view this information by running ${this.client.getCommandString('info')} or ${this.client.getCommandString('help')}
                         Best wishes,
                         DevAX1T
                     `)
