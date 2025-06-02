@@ -36,12 +36,14 @@ const ARGUMENTS = {
     divisionPromote: {
         name: 'division',
         description: 'What division is the user being promoted in?',
-        type: MaylogEnum.Argument.Role
+        type: MaylogEnum.Argument.Role,
+        optional: true
     } as MaylogArgument,
     divisionDemote: {
         name: 'division',
         description: 'What division is the user being demoted in?',
-        type: MaylogEnum.Argument.Role
+        type: MaylogEnum.Argument.Role,
+        optional: true
     } as MaylogArgument,
 }
 // ALSO MM.DD.YYYY AND MM/DD/YYYY (do regex)
@@ -326,7 +328,7 @@ export default <ActionData>{
     },
     demote: {
         description: 'Log a demotion.',
-        arguments: [ ARGUMENTS.rankDemote, ARGUMENTS.divisionPromote ],
+        arguments: [ ARGUMENTS.rankDemote, ARGUMENTS.divisionDemote ],
         exec: (data) => {
             const { embed, subject, context } = data;
             const division = context.arguments.getRole('division');

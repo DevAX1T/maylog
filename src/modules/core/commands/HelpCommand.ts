@@ -7,7 +7,7 @@ import Constants from '../../../Constants';
 import colors from '../../../databases/colors';
 import CachedCollection from '../../../util/CachedCollection';
 
-const IS_DISABLED = true;
+const IS_DISABLED = false;
 const cache = new CachedCollection((60 * 1000) * 1);
 
 export = class HelpCommand extends MaylogCommand {

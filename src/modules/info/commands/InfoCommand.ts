@@ -9,7 +9,7 @@ import PrettyMilliseconds from '../../../util/PrettyMilliseconds';
 import colors from '../../../databases/colors';
 import CachedCollection from '../../../util/CachedCollection';
 
-const IS_DISABLED = true;
+const IS_DISABLED = false;
 const cache = new CachedCollection((60 * 1000) * 2);
 
 export = class InfoCommand extends MaylogCommand {

@@ -13,7 +13,7 @@ import errors from '../../../databases/errors';
 import { EmbedBuilder } from '@discordjs/builders';
 import CachedCollection from '../../../util/CachedCollection';
 
-const IS_DISABLED = true;
+const IS_DISABLED = false;
 const cache = new CachedCollection((60 * 1000) * 5);
 
 interface IRobloxData {
@@ -71,6 +71,10 @@ function recordAction(userId: string): { user: string, created: number} | false 
     }, 50000);
     return dataFormat;
 }
+
+// action request: add roles required to approve (ALL MUT APPROVE)
+// and some bypass request
+// buttons prob: "Approve" | 'Deny' | 'BYPASS APPROVAL'
 
 export = class DeptActionCommand extends MaylogCommand {
     constructor(client: MaylogClient) {
@@ -209,9 +213,10 @@ export = class DeptActionCommand extends MaylogCommand {
             let isProcessed = false;
             let timeout!: NodeJS.Timeout;
             const continueProcess = async (interaction: ButtonInteraction) => {
-                isProcessed = true;
                 this.client.removeListener('interactionCreate', listener);
                 clearTimeout(timeout);
+                if (isProcessed) return;
+                isProcessed = true;
                 if (interaction.customId === `cancel-${uuid}`) {
                     editReply('Interaction cancelled.', [], interaction);
                     return resolve(MaylogEnum.CommandResult.Success);
