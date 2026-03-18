@@ -2,10 +2,9 @@
 import { AbortController as PolyfillAbortController } from "node-abort-controller";
 import { EventEmitter } from "events";
 import { randomBytes, createHash } from "crypto";
-import { Redis as IORedisClient, Cluster as IORedisCluster } from "ioredis";
 import Global from '../../Global';
 
-type Client = IORedisClient | IORedisCluster;
+type Client = any;
 
 // Define script constants.
 const ACQUIRE_SCRIPT = `
@@ -600,10 +599,10 @@ export default class Redlock extends EventEmitter {
       try {
         // Attempt to evaluate the script by its hash.
         //@ts-ignore
-        const shaResult = (await client.evalsha(script.hash, keys.length, [
-          ...keys,
-          ...args,
-        ])) as unknown;
+        const shaResult = (await client.evalSha(script.hash, {
+          keys,
+          arguments: args.map(String),
+        })) as unknown;
 
         if (typeof shaResult !== "number") {
           throw new Error(
@@ -622,10 +621,10 @@ export default class Redlock extends EventEmitter {
           throw error;
         }
         //@ts-ignore
-        const rawResult = (await client.eval(script.value, keys.length, [
-          ...keys,
-          ...args,
-        ])) as unknown;
+        const rawResult = (await client.eval(script.value, {
+          keys,
+          arguments: args.map(String),
+        })) as unknown;
 
         if (typeof rawResult !== "number") {
           throw new Error(

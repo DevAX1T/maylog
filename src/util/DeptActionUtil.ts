@@ -123,8 +123,8 @@ async function createRedisCache(provider: DataProvider, rodata: any, guildId: st
                 }
             }
             rodata.cachedOn = Date.now() + (3600 * 3 * 1000);
-            await provider.redis.psetex(`${Global.keys.users}:${account}`, Constants.expirationMs.user, JSON.stringify(rodata)).catch(() => false);
-            await provider.redis.psetex(`${Global.keys.usersLookup}:${rodata.user_id}`, Constants.expirationMs.user - 500, account).catch(() => false);
+            await provider.redis.pSetEx(`${Global.keys.users}:${account}`, Constants.expirationMs.user, JSON.stringify(rodata)).catch(() => false);
+            await provider.redis.pSetEx(`${Global.keys.usersLookup}:${rodata.user_id}`, Constants.expirationMs.user - 500, account).catch(() => false);
             resolve();
         } catch { resolve() }
     });
@@ -146,7 +146,7 @@ function parseSubject(context: MaylogCommandContext, subject: string): Promise<I
                 const userId = Number(subject.slice(1, subject.length));
                 if (!userId || isNaN(userId)) return reject();
                 try {
-                    const result = await context.client.DataProvider.redis.eval(FETCH_LUA_SCRIPT, 0, userId) as string | 0;
+                    const result = await context.client.DataProvider.redis.eval(FETCH_LUA_SCRIPT, { keys: [], arguments: [String(userId)] }) as string | 0;
                     if (result === 0) {
                         noblox.getUsernameFromId(userId).then(username => {
                             if (!username) return reject();
@@ -168,7 +168,7 @@ function parseSubject(context: MaylogCommandContext, subject: string): Promise<I
                 noblox.getIdFromUsername(subject).then(async id => {
                     if (!id) reject();
                     try {
-                        const result = await context.client.DataProvider.redis.eval(FETCH_LUA_SCRIPT, 0, id) as string | 0;
+                        const result = await context.client.DataProvider.redis.eval(FETCH_LUA_SCRIPT, { keys: [], arguments: [String(id)] }) as string | 0;
                         if (result === 0) {
                             noblox.getUsernameFromId(id).then(username => {
                                 if (!username) reject();

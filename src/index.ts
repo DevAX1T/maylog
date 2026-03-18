@@ -17,15 +17,7 @@ const PROVIDER_INFORMATION: IProviderOptions = {
         srv: process.env.MONGO_URI as string
     },
     redis: {
-        clientOptions: {
-            host: process.env.REDIS_HOST as string,
-            password: process.env.REDIS_PASSWORD as string,
-            lazyConnect: true,
-            reconnectOnError: (error) => {
-                console.log(`Failed to connect to redis: ${error}`);
-                return true;
-            }
-        }
+        url: process.env.REDIS_URI as string
     }
 }
 

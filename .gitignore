@@ -3,6 +3,7 @@
 certificates/
 # General exclusion
 .vscode/
+.claude/
 out/
 node_modules/
 package-lock.json

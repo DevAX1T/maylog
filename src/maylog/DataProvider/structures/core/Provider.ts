@@ -1,12 +1,11 @@
 import { MongoClientOptions, MongoOptions } from 'mongodb';
-import { RedisOptions } from 'ioredis'
 export interface IProviderOptions {
     mongo: {
         srv: string;
         clientOptions?: MongoClientOptions;
     };
     redis: {
-        clientOptions: RedisOptions;
+        url: string;
     }
 }
 

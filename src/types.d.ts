@@ -7,8 +7,7 @@ declare global {
     namespace NodeJS {
         interface ProcessEnv {
             MONGO_URI:                 string;
-            REDIS_HOST:                string;
-            REDIS_PASSWORD:            string;
+            REDIS_URI:                 string;
             TOKEN_PRODUCTION:          string;
             TOKEN_DEVELOPMENT:         string;
             /** Bot invite link */

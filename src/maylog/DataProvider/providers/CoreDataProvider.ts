@@ -4,20 +4,20 @@ import * as Sentry from '@sentry/node';
 import Global, { ILog } from '../../../Global';
 import GuildDataProvider from './GuildDataProvider';
 import Logger from '../../../util/Logger';
-import Redis from 'ioredis';
+import { createClient, RedisClientType } from 'redis';
 import MaylogClient from '../../structures/MaylogClient';
 import Redlock from '../Redlock';
 
 export default class DataProvider {
     public readonly client: MaylogClient;
-    public readonly redis: Redis;
+    public readonly redis: RedisClientType;
     public readonly mongo: MongoClient;
     public readonly guilds: GuildDataProvider;
     public readonly redlock: Redlock;
     constructor(client: MaylogClient, providerOptions: IProviderOptions) {
         this.client = client;
         this.guilds = new GuildDataProvider(this);
-        this.redis = new Redis(providerOptions.redis.clientOptions);
+        this.redis = createClient({ url: providerOptions.redis.url }) as RedisClientType;
         this.mongo = new MongoClient(providerOptions.mongo.srv, providerOptions.mongo.clientOptions);
         this.redlock = new Redlock([ this.redis ], { name: 'locks/maylog' });
 
